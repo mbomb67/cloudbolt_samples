@@ -1,0 +1,10 @@
+{
+    "description": "Discover AWS CloudFormation  records with some identifying attributes",
+    "max-retries": 0,
+    "name": "Discover AWS CloudFormation",
+    "resource-technologies": [],
+    "script-filename": "sync_2dEI03A.py",
+    "shared": "False",
+    "target-os-families": [],
+    "type": "CloudBolt Plug-in"
+}

@@ -1,0 +1,12 @@
+{
+    "description": "",
+    "max-retries": 0,
+    "name": "Delete AWS CloudFormation",
+    "resource-technologies": [
+        "Amazon Web Services"
+    ],
+    "script-filename": "delete_QjTCbjH.py",
+    "shared": "False",
+    "target-os-families": [],
+    "type": "CloudBolt Plug-in"
+}

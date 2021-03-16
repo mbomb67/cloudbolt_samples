@@ -1,0 +1,44 @@
+{
+    "any-group-can-deploy": true,
+    "auto-historical-resources": false,
+    "build-items": [
+        {
+            "action-name": "Create AWS CloudFormation stack",
+            "continue-on-failure": false,
+            "deploy-seq": 2,
+            "description": null,
+            "execute-in-parallel": false,
+            "name": "Create AWS CloudFormation stack",
+            "run-on-scale-up": true,
+            "show-on-order-form": true,
+            "type": "plugin"
+        }
+    ],
+    "description": "Create and manage AWS CloudFormation stacks.",
+    "favorited": false,
+    "icon": "cloud_formation.png",
+    "is-orderable": true,
+    "management-actions": [],
+    "name": "AWS CloudFormation - From GitHub",
+    "resource-type": {
+        "icon": "",
+        "label": "Service",
+        "lifecycle": "ACTIVE",
+        "list-view-columns": [],
+        "name": "service",
+        "plural-label": null
+    },
+    "sequence": 0,
+    "show-recipient-field-on-order-form": false,
+    "teardown-items": [
+        {
+            "action-name": "Delete AWS CloudFormation",
+            "continue-on-failure": false,
+            "deploy-seq": -1,
+            "description": null,
+            "execute-in-parallel": false,
+            "name": "Delete AWS CloudFormation",
+            "type": "teardown_plugin"
+        }
+    ]
+}
