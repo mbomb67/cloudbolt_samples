@@ -2,6 +2,15 @@
 
 Teardown Service Item Action for ARM Template Blueprint
 
+Note - depending on the Azure service being deleted, you may get errors 
+stating that the API version passed isn't correct. You will need to 
+Add a valid API version for the provider_type and resource_type in 
+to the get_api_version method. The error thrown should include a list
+of the valid API versions for the service that is being deleted. 
+
+Also note - this action will delete all resources associated with a Virtual
+Machine to include attached disks and networks. 
+
 """
 
 if __name__ == '__main__':
@@ -9,9 +18,13 @@ if __name__ == '__main__':
     django.setup()
 from resourcehandlers.azure_arm.models import AzureARMHandler
 from common.methods import set_progress
-import re
 import sys
 
+def get_provider_type_from_id(resource_id):
+    return resource_id.split('/')[6]
+
+def get_resource_type_from_id(resource_id):
+    return resource_id.split('/')[7]
 
 def get_api_version(provider_type,resource_type=None):
     if provider_type == 'Microsoft.Compute' and resource_type =='virtualMachines':
@@ -21,12 +34,6 @@ def get_api_version(provider_type,resource_type=None):
     else:
         api_version = '2018-05-01'
     return api_version
-
-def get_provider_type_from_id(resource_id):
-    return resource_id.split('/')[6]
-
-def get_resource_type_from_id(resource_id):
-    return resource_id.split('/')[7]
 
 def run(job, *args, **kwargs):
     resource = job.resource_set.first()
@@ -125,4 +132,4 @@ def run(job, *args, **kwargs):
         return "SUCCESS", "Resource was not found", ""
     
 if __name__ == '__main__':
-    main()
+    run()

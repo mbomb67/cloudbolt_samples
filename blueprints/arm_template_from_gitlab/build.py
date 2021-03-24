@@ -1,3 +1,24 @@
+"""
+Build service item action for Azure Resource Manager Templates Calling GitLab XUI
+
+Note: This is currently structured to only support JSON formatted 
+ARM Templates
+
+Prerequisites: 
+- gitlab XUI installed in Cloudbolt
+- ConnectionInfo Configured for gitlab - must include 'gitlab' label
+
+Edit the following input methods below to match your environment:
+- generate_options_for_project_id
+- generate_options_for_params_path
+- generate_options_for_template_path
+- generate_options_for_git_branch
+
+Edit the manual_parameters section in the run method to allow or disallow 
+the input of different manual parameters. 
+
+"""
+
 from common.methods import set_progress
 from infrastructure.models import CustomField
 from infrastructure.models import Environment
@@ -8,35 +29,30 @@ import time
 import settings
 from ast import literal_eval
 
-"""
-Build service item action for Azure Resource Manager Templates Calling GitLab XUI
+def generate_options_for_project_id(server=None, **kwargs):
+    options = [
+        ("25216144","cloud_formation")
+    ]
+    return options
 
-Note: This is currently structured to only support JSON formatted 
-ARM Templates
+def generate_options_for_params_path(server=None, **kwargs):
+    options = [
+        ("arm_templates/parameters.json","Default Parameters"),
+    ]
+    return options
 
-Prerequisites: 
-- gitlab XUI installed in Cloudbolt
-- ConnectionInfo Configured for gitlab
+def generate_options_for_template_path(server=None, **kwargs):
+    options = [
+        ("arm_templates/template.json","Default Template"),
+        ("arm_templates/basic_template.json","Basic Template"),
+    ]
+    return options
 
-"""
-def get_value_from_form_data(form_data=None, form_prefix=None, field_name=None):
-    field_key = None
-    field_value = None
-    if "form_prefix" in form_data and not form_prefix:
-        form_prefix = form_data.get("form_prefix", None)
-    if not form_prefix:
-        # Nothing can be found
-        return field_key, field_value
-    for key_name in form_data:
-        if form_prefix + "-" + field_name + "_a" in key_name:
-            field_key = key_name
-            field_value = (
-                form_data[key_name]
-                if isinstance(form_data[key_name], str)
-                else form_data[key_name][0]
-            )
-            break
-    return field_key, field_value
+def generate_options_for_git_branch(server=None, **kwargs):
+    options = [
+        ("master","master")
+    ]
+    return options
 
 def generate_options_for_env_id(server=None, **kwargs):
     envs = Environment.objects.filter(
@@ -102,31 +118,6 @@ def generate_options_for_gitlab_name(server=None, **kwargs):
     cis = ConnectionInfo.objects.filter(
         labels__name='gitlab').values("id", "name")
     options = [(ci['name'], ci['name']) for ci in cis]
-    return options
-
-def generate_options_for_project_id(server=None, **kwargs):
-    options = [
-        ("25216144","cloud_formation")
-    ]
-    return options
-
-def generate_options_for_params_path(server=None, **kwargs):
-    options = [
-        ("arm_templates/parameters.json","Default Parameters"),
-    ]
-    return options
-
-def generate_options_for_template_path(server=None, **kwargs):
-    options = [
-        ("arm_templates/template.json","Default Template"),
-        ("arm_templates/basic_template.json","Basic Template"),
-    ]
-    return options
-
-def generate_options_for_git_branch(server=None, **kwargs):
-    options = [
-        ("master","master")
-    ]
     return options
 
 def get_or_create_cfs():
@@ -210,6 +201,7 @@ def run(job, logger=None, **kwargs):
     resource.azure_deployment_name = deployment_name
     resource.azure_deployment_id = deployment.id
     resource.azure_correlation_id = deploy_props.correlation_id
+    resource.resource_group = resource_group
     i = 0
     for output_resource in deploy_props.additional_properties["outputResources"]:
         field_name_id = f'output_resource_{i}_id'
