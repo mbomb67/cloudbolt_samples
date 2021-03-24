@@ -44,7 +44,6 @@ def generate_options_for_params_path(server=None, **kwargs):
 def generate_options_for_template_path(server=None, **kwargs):
     options = [
         ("arm_templates/template.json","Default Template"),
-        ("arm_templates/basic_template.json","Basic Template"),
     ]
     return options
 
@@ -152,15 +151,15 @@ def run(job, logger=None, **kwargs):
     git_branch = '{{ git_branch }}'
 
     #ARM Params
-    deployment_name = "{{ name }}"
     resource_group = literal_eval("{{ resource_group }}")['rg_name']
     env_id = '{{ env_id }}'
-    timeout = '{{ timeout }}'
+    timeout = 300
     manual_parameters = {
         "virtualMachineName": '{{ virtual_machine_name }}',
         "adminPassword": '{{ admin_password }}'
     }
     resource = kwargs.get('resource')
+    deployment_name = resource.name
 
     #Get parameters file from gitlab
     parameters = {}    
