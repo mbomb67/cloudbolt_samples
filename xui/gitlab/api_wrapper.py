@@ -1,5 +1,4 @@
-import requests, socket, base64
-import json
+import requests
 
 if __name__ == '__main__':
     import django
@@ -11,6 +10,7 @@ from utilities.rest import RestConnection
 import sys
 from common.methods import set_progress
 import urllib.parse
+import json
 
 
 class GitLabConnector(RestConnection):
@@ -21,6 +21,14 @@ class GitLabConnector(RestConnection):
 
     Installation Instructions: 
     1. Create a Connection Info for gitlab. This must be labelled as 'gitlab'
+    2. In the Connection Info, you can either:
+        a. Store the private token as the password value
+        b. OR use the headers field and enter the following (replacing with your token:
+            {
+                'PRIVATE-TOKEN': '<Your token goes here>',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
 
     Standard REST Call Example:
         from from xui.gitlab.api_wrapper import GitLabConnector
@@ -40,32 +48,39 @@ class GitLabConnector(RestConnection):
     validation.
     """
 
-    def __init__(self, name: str = "gitlab", verify_certs: bool = False, 
-                tracking_id: str = ""):
+    def __init__(self, name: str = "gitlab", verify_certs: bool = False):
         if not verify_certs:
             import urllib3
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-        try: 
+        try:
             conn_info = ConnectionInfo.objects.get(
                 name__iexact=name,
                 labels__name='gitlab'
             )
-        except: 
+        except:
             err_str = (f'ConnectionInfo could not be found with name: {name},'
                        f' and label gitlab')
             raise Exception(err_str)
         self.conn_info = conn_info
         super().__init__(conn_info.username, conn_info.password)
+        if conn_info.headers:
+            headers_dict = json.loads(conn_info.headers)
+            if headers_dict["PRIVATE-TOKEN"]:
+                self.headers = conn_info.headers
+            else:
+                headers_dict["PRIVATE-TOKEN"] = conn_info.password
+                self.headers = json.dumps(headers_dict)
+        else:
+            self.headers = {
+                'PRIVATE-TOKEN': conn_info.password,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
         self.verify_certs = verify_certs
         self.base_url = conn_info.protocol + '://'
         self.base_url += conn_info.ip
         self.base_url += f':{conn_info.port}'
         self.base_url += '/api/v4'
-        self.headers = {
-            'PRIVATE-TOKEN':conn_info.password,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
 
     def __enter__(self):
         return self
@@ -109,12 +124,12 @@ class GitLabConnector(RestConnection):
     def __repr__(self):
         return 'GitLabManager'
 
-    def get_raw_file_as_json(self,project_id,file_path,git_branch):
-        try: 
-            #Encode the file_path URI
-            file_path = urllib.parse.quote(file_path,safe='')
+    def get_raw_file_as_json(self, project_id, file_path, git_branch):
+        try:
+            # Encode the file_path URI
+            file_path = urllib.parse.quote(file_path, safe='')
             path = (f'/projects/{project_id}/repository/files/{file_path}/raw'
-                        f'?ref={git_branch}')
+                    f'?ref={git_branch}')
             r = self.get(path)
             r.raise_for_status()
             r_json = r.json()
@@ -122,13 +137,14 @@ class GitLabConnector(RestConnection):
             return raw_file_json
         except:
             error_string = (f'Error: {sys.exc_info()[0]}. {sys.exc_info()[1]}, '
-                        f'line: {sys.exc_info()[2].tb_lineno}')
+                            f'line: {sys.exc_info()[2].tb_lineno}')
             set_progress(error_string)
             raise Exception(f'GitLab REST call failed. {error_string}')
-    
+
+
 if __name__ == '__main__':
     with GitLabConnector('gitlab') as gitlab:
         response = gitlab.get('/projects/')
     import json
-    print(json.dumps(response.json(), indent=True))
 
+    print(json.dumps(response.json(), indent=True))
