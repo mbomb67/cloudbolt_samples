@@ -12,7 +12,6 @@ from common.methods import set_progress
 import urllib.parse
 import json
 
-
 class GitLabConnector(RestConnection):
     """
     This is a context manager class available to CloudBolt Plugins that
@@ -65,11 +64,18 @@ class GitLabConnector(RestConnection):
         super().__init__(conn_info.username, conn_info.password)
         if conn_info.headers:
             headers_dict = json.loads(conn_info.headers)
-            if headers_dict["PRIVATE-TOKEN"]:
-                self.headers = conn_info.headers
-            else:
-                headers_dict["PRIVATE-TOKEN"] = conn_info.password
-                self.headers = json.dumps(headers_dict)
+            try: 
+                headers_dict["PRIVATE-TOKEN"]
+                self.headers = headers_dict
+            except KeyError:
+                if conn_info.password:
+                    headers_dict["PRIVATE-TOKEN"] = conn_info.password
+                    self.headers = headers_dict
+                else: 
+                    err_string = (f'Connection Info did not contain either '
+                        f'PRIVATE-TOKEN in the headers or a password. Check '
+                        f'the Connection Info {name} and try again.')
+                    raise Exception(err_string)
         else:
             self.headers = {
                 'PRIVATE-TOKEN': conn_info.password,
@@ -130,6 +136,7 @@ class GitLabConnector(RestConnection):
             file_path = urllib.parse.quote(file_path, safe='')
             path = (f'/projects/{project_id}/repository/files/{file_path}/raw'
                     f'?ref={git_branch}')
+            set_progress(f'Submitting request to GitLab URL: {path}')
             r = self.get(path)
             r.raise_for_status()
             r_json = r.json()
