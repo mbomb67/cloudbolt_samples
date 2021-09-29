@@ -1,0 +1,10 @@
+{
+    "description": "",
+    "max-retries": 0,
+    "name": "AKS Cluster Teardown",
+    "resource-technologies": [],
+    "script-filename": "teardown.py",
+    "shared": "True",
+    "target-os-families": [],
+    "type": "CloudBolt Plug-in"
+}

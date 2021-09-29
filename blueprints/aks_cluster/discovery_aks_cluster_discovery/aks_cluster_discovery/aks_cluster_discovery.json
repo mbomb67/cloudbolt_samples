@@ -1,0 +1,10 @@
+{
+    "description": "",
+    "max-retries": 0,
+    "name": "AKS Cluster Discovery",
+    "resource-technologies": [],
+    "script-filename": "discovery.py",
+    "shared": "False",
+    "target-os-families": [],
+    "type": "CloudBolt Plug-in"
+}

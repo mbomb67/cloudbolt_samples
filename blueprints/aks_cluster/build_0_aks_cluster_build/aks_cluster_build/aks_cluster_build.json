@@ -1,0 +1,277 @@
+{
+    "action-inputs": [
+        {
+            "available-all-servers": false,
+            "description": "DNS prefix to use with hosted Kubernetes API server FQDN",
+            "field-dependency-controlling-set": [],
+            "field-dependency-dependent-set": [],
+            "global-options": [],
+            "hide-if-default-value": false,
+            "label": "Dns Prefix",
+            "maximum": "64.00",
+            "minimum": "1.00",
+            "name": "dns_prefix",
+            "regex-constraint": "^[A-Za-z0-9-]*$",
+            "relevant-osfamilies": [],
+            "required": true,
+            "show-as-attribute": false,
+            "show-on-servers": false,
+            "type": "STR"
+        },
+        {
+            "available-all-servers": false,
+            "description": "Boolean flag to turn on and off Azure Policy addon",
+            "field-dependency-controlling-set": [],
+            "field-dependency-dependent-set": [],
+            "global-options": [],
+            "hide-if-default-value": false,
+            "label": "Enable Azure Policy",
+            "name": "enable_azure_policy",
+            "relevant-osfamilies": [],
+            "required": true,
+            "show-as-attribute": false,
+            "show-on-servers": false,
+            "type": "BOOL"
+        },
+        {
+            "available-all-servers": false,
+            "description": "Enable private network access to the Kubernetes cluster",
+            "field-dependency-controlling-set": [],
+            "field-dependency-dependent-set": [],
+            "global-options": [],
+            "hide-if-default-value": false,
+            "label": "Enable Private Cluster",
+            "name": "enable_private_cluster",
+            "relevant-osfamilies": [],
+            "required": true,
+            "show-as-attribute": false,
+            "show-on-servers": false,
+            "type": "BOOL"
+        },
+        {
+            "available-all-servers": false,
+            "description": "Boolean flag to turn on and off of RBAC",
+            "field-dependency-controlling-set": [],
+            "field-dependency-dependent-set": [],
+            "global-options": [],
+            "hide-if-default-value": false,
+            "label": "Enable Rbac",
+            "name": "enable_rbac",
+            "relevant-osfamilies": [],
+            "required": true,
+            "show-as-attribute": false,
+            "show-on-servers": false,
+            "type": "BOOL"
+        },
+        {
+            "available-all-servers": false,
+            "description": "Select the CloudBolt environment where you want to deploy the AKS cluster",
+            "field-dependency-controlling-set": [],
+            "field-dependency-dependent-set": [
+                {
+                    "controlling-field": {
+                        "name": "env_id_a187"
+                    },
+                    "custom-field-options": [],
+                    "dependency-type": "REGENOPTIONS",
+                    "dependent-field": {
+                        "name": "resource_group_a187"
+                    },
+                    "maximum": null,
+                    "minimum": null,
+                    "regex": ""
+                },
+                {
+                    "controlling-field": {
+                        "name": "env_id_a187"
+                    },
+                    "custom-field-options": [],
+                    "dependency-type": "REGENOPTIONS",
+                    "dependent-field": {
+                        "name": "resource_group_a187"
+                    },
+                    "maximum": null,
+                    "minimum": null,
+                    "regex": ""
+                },
+                {
+                    "controlling-field": {
+                        "name": "env_id_a187"
+                    },
+                    "custom-field-options": [],
+                    "dependency-type": "REGENOPTIONS",
+                    "dependent-field": {
+                        "name": "node_size_a187"
+                    },
+                    "maximum": null,
+                    "minimum": null,
+                    "regex": ""
+                }
+            ],
+            "global-options": [],
+            "hide-if-default-value": false,
+            "label": "Environment",
+            "name": "env_id",
+            "relevant-osfamilies": [],
+            "required": true,
+            "show-as-attribute": false,
+            "show-on-servers": false,
+            "type": "STR"
+        },
+        {
+            "available-all-servers": false,
+            "description": "Boolean flag to turn on and off http application routing",
+            "field-dependency-controlling-set": [],
+            "field-dependency-dependent-set": [],
+            "global-options": [],
+            "hide-if-default-value": false,
+            "label": "Http Application Routing",
+            "name": "http_application_routing",
+            "relevant-osfamilies": [],
+            "required": true,
+            "show-as-attribute": false,
+            "show-on-servers": false,
+            "type": "BOOL"
+        },
+        {
+            "available-all-servers": false,
+            "description": "The version of Kubernetes",
+            "field-dependency-controlling-set": [],
+            "field-dependency-dependent-set": [],
+            "global-options": [],
+            "hide-if-default-value": false,
+            "label": "Kubernetes Version",
+            "name": "kubernetes_version",
+            "relevant-osfamilies": [],
+            "required": true,
+            "show-as-attribute": false,
+            "show-on-servers": false,
+            "type": "STR"
+        },
+        {
+            "available-all-servers": false,
+            "description": "How many nodes to deploy for the cluster",
+            "field-dependency-controlling-set": [],
+            "field-dependency-dependent-set": [],
+            "global-options": [],
+            "hide-if-default-value": false,
+            "label": "Node Count",
+            "maximum": "50.00",
+            "minimum": "1.00",
+            "name": "node_count",
+            "relevant-osfamilies": [],
+            "required": true,
+            "show-as-attribute": false,
+            "show-on-servers": false,
+            "type": "INT"
+        },
+        {
+            "available-all-servers": false,
+            "description": "Size of the Nodes in the cluster",
+            "field-dependency-controlling-set": [
+                {
+                    "controlling-field": {
+                        "name": "env_id_a187"
+                    },
+                    "custom-field-options": [],
+                    "dependency-type": "REGENOPTIONS",
+                    "dependent-field": {
+                        "name": "node_size_a187"
+                    },
+                    "maximum": null,
+                    "minimum": null,
+                    "regex": ""
+                }
+            ],
+            "field-dependency-dependent-set": [],
+            "global-options": [],
+            "hide-if-default-value": false,
+            "label": "Node Size",
+            "name": "node_size",
+            "relevant-osfamilies": [],
+            "required": true,
+            "show-as-attribute": false,
+            "show-on-servers": false,
+            "type": "STR"
+        },
+        {
+            "available-all-servers": false,
+            "description": "Disk size (in GiB) to provision for each of the agent pool nodes. This value ranges from 0 to 1023. Specifying 0 will apply the default disk size for that agentVMSize",
+            "field-dependency-controlling-set": [],
+            "field-dependency-dependent-set": [],
+            "global-options": [],
+            "hide-if-default-value": false,
+            "label": "OS Disk Size",
+            "maximum": "1023.00",
+            "name": "os_disk_size",
+            "relevant-osfamilies": [],
+            "required": true,
+            "show-as-attribute": false,
+            "show-on-servers": false,
+            "type": "INT"
+        },
+        {
+            "available-all-servers": false,
+            "description": "Select the Azure Resource Group where this Cluster should be created",
+            "field-dependency-controlling-set": [
+                {
+                    "controlling-field": {
+                        "name": "env_id_a187"
+                    },
+                    "custom-field-options": [],
+                    "dependency-type": "REGENOPTIONS",
+                    "dependent-field": {
+                        "name": "resource_group_a187"
+                    },
+                    "maximum": null,
+                    "minimum": null,
+                    "regex": ""
+                },
+                {
+                    "controlling-field": {
+                        "name": "env_id_a187"
+                    },
+                    "custom-field-options": [],
+                    "dependency-type": "REGENOPTIONS",
+                    "dependent-field": {
+                        "name": "resource_group_a187"
+                    },
+                    "maximum": null,
+                    "minimum": null,
+                    "regex": ""
+                }
+            ],
+            "field-dependency-dependent-set": [],
+            "global-options": [],
+            "hide-if-default-value": false,
+            "label": "Resource Group",
+            "name": "resource_group",
+            "relevant-osfamilies": [],
+            "required": true,
+            "show-as-attribute": false,
+            "show-on-servers": false,
+            "type": "STR"
+        }
+    ],
+    "action-inputs-sequence": [
+        "env_id",
+        "resource_group",
+        "node_size",
+        "node_count",
+        "os_disk_size",
+        "kubernetes_version",
+        "dns_prefix",
+        "enable_rbac",
+        "enable_private_cluster",
+        "http_application_routing",
+        "enable_azure_policy"
+    ],
+    "description": "",
+    "max-retries": 0,
+    "name": "AKS Cluster Build",
+    "resource-technologies": [],
+    "script-filename": "build.py",
+    "shared": "False",
+    "target-os-families": [],
+    "type": "CloudBolt Plug-in"
+}

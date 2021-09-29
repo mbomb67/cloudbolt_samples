@@ -1,0 +1,87 @@
+{
+    "any-group-can-deploy": true,
+    "auto-historical-resources": false,
+    "build-items": [
+        {
+            "action-name": "AKS Cluster Build",
+            "continue-on-failure": false,
+            "deploy-seq": 0,
+            "description": "",
+            "execute-in-parallel": false,
+            "name": "AKS Cluster Build",
+            "parameter-defaults": [
+                {
+                    "label": "Enable Azure Policy",
+                    "name": "enable_azure_policy_a187",
+                    "value": "False"
+                },
+                {
+                    "label": "Enable Private Cluster",
+                    "name": "enable_private_cluster_a187",
+                    "value": "False"
+                },
+                {
+                    "label": "Enable Rbac",
+                    "name": "enable_rbac_a187",
+                    "value": "True"
+                },
+                {
+                    "label": "Http Application Routing",
+                    "name": "http_application_routing_a187",
+                    "value": "True"
+                },
+                {
+                    "label": "Kubernetes Version",
+                    "name": "kubernetes_version_a187",
+                    "value": "1.20.7"
+                },
+                {
+                    "label": "Node Count",
+                    "name": "node_count_a187",
+                    "value": "1"
+                },
+                {
+                    "label": "OS Disk Size",
+                    "name": "os_disk_size_a187",
+                    "value": "0"
+                }
+            ],
+            "run-on-scale-up": true,
+            "show-on-order-form": true,
+            "type": "plugin"
+        }
+    ],
+    "description": "",
+    "favorited": true,
+    "icon": "aks_L5pPCax.png",
+    "is-orderable": true,
+    "management-actions": [
+        {
+            "enabled": "True",
+            "label": "AKS Cluster Day 2"
+        }
+    ],
+    "name": "AKS Cluster",
+    "resource-name-template": "sedemo-aks-00X",
+    "resource-type": {
+        "icon": "fas fa-dharmachakra",
+        "label": "Kubernetes Cluster",
+        "lifecycle": "ACTIVE",
+        "list-view-columns": [],
+        "name": "kubernetes_cluster",
+        "plural-label": "Kubernetes Clusters"
+    },
+    "sequence": 0,
+    "show-recipient-field-on-order-form": false,
+    "teardown-items": [
+        {
+            "action-name": "AKS Cluster Teardown",
+            "continue-on-failure": false,
+            "deploy-seq": -1,
+            "description": null,
+            "execute-in-parallel": false,
+            "name": "AKS Cluster Teardown",
+            "type": "teardown_plugin"
+        }
+    ]
+}

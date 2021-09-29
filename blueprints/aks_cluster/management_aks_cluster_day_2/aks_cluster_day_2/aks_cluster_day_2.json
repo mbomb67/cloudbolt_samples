@@ -1,0 +1,9 @@
+{
+    "action-input-default-values": [],
+    "base-action-name": "AKS Cluster Day 2",
+    "dialog-message": "",
+    "enabled": "True",
+    "extra-classes": "",
+    "label": "AKS Cluster Day 2",
+    "submit-button-label": ""
+}
