@@ -1,0 +1,25 @@
+Parameters:
+  InstanceType:
+    Description: WebServer EC2 instance type (has default, AllowedValues)
+    Type: String
+    Default: t2.small
+    AllowedValues:
+      - t1.micro
+      - t2.nano
+      - t2.micro
+      - t2.small
+    ConstraintDescription: must be a valid EC2 instance type.
+  SubnetId:
+    Description: Select the Subnet where the VM should be deployed
+    Type: String
+    Default: subnet-0d252ca8f7e011969
+    ConstraintDescription: Must be a valid subnet
+
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: us-east-2c
+      ImageId: ami-03d64741867e7bb94
+      InstanceType: !Ref InstanceType
+      SubnetId: !Ref SubnetId
