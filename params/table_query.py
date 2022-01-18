@@ -7,6 +7,7 @@ from api.api_samples.python_client.ext import requests
 from common.methods import set_progress
 from itsm.servicenow.models import ServiceNowITSM
 import json
+from common.methods import get_proxies
 
 
 def get_options_list(field, **kwargs):
@@ -14,6 +15,7 @@ def get_options_list(field, **kwargs):
     snowitsm = ServiceNowITSM.objects.first()
     wrapper = snowitsm.get_api_wrapper()
     base_url = wrapper.service_now_instance_url.replace("/login.do", "")
+    proxies = get_proxies(base_url)
     req_for_data = lookup_ci(table_name='cmdb_ci_appl',
                              base_url=base_url,
                              conn=snowitsm,
@@ -28,7 +30,8 @@ def get_options_list(field, **kwargs):
                                  'version',
                                  'operational_status',
                                  'sys_created_on',
-                             ]
+                             ],
+                             proxies=proxies,
                              )
     response_json = json.loads(req_for_data)
     results = response_json["result"]
@@ -44,7 +47,7 @@ def get_options_list(field, **kwargs):
 
 
 def lookup_ci(table_name=None, base_url=None, conn=None,
-              sysparm_fields: list = None, url=None):
+              sysparm_fields: list = None, proxies=None, url=None):
     if not url:
         query = ''
         if sysparm_fields:
@@ -52,14 +55,16 @@ def lookup_ci(table_name=None, base_url=None, conn=None,
                                'sysparm_fields': ",".join(sysparm_fields)})
 
         url = base_url + f"/api/now/table/{table_name}?{query}"
-
+    set_progress(f'proxies: {proxies}')
     response = requests.get(
         url=url,
         auth=(conn.service_account, conn.password),
+        proxies=proxies,
         headers={
             "Content-Type": "application/json",
             "Accept": "application/json"
         },
+        verify=False,
         timeout=5.0
     )
 
