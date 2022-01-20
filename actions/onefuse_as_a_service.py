@@ -26,89 +26,70 @@ def run(job, **kwargs):
 
 
 def onefuse_naming(resource, utilities):
-    logger.debug(f"Provisioning Naming as a Service for resource: "
-                 f"{resource}")
     properties_stack = run_property_toolkit(resource, utilities)
-    onefuse_endpoint = properties_stack["OneFuse_NamingPolicy"].split(":")[0]
-    naming_policy = properties_stack["OneFuse_NamingPolicy"].split(":")[1]
-    set_progress(f"Starting OneFuse Naming Policy: "
-                 f"{naming_policy}, Endpoint: {onefuse_endpoint}")
+    endpoint, policy = get_endpoint_and_policy(properties_stack)
+    set_progress(f"Starting OneFuse Naming Policy: {policy}, Endpoint: {endpoint}")
     from xui.onefuse.globals import VERIFY_CERTS
-    ofm = CbOneFuseManager(onefuse_endpoint, VERIFY_CERTS, logger=logger)
-    try:
-        tracking_id = properties_stack["OneFuse_Tracking_Id"]
-    except KeyError:
-        tracking_id = ""
-    response_json = ofm.provision_naming(naming_policy, properties_stack,
-                                         tracking_id)
+    ofm = CbOneFuseManager(endpoint, VERIFY_CERTS, logger=logger)
+    tracking_id = get_tracking_id(properties_stack)
+    response_json = ofm.provision_naming(policy, properties_stack, tracking_id)
     resource_name = response_json.get("name")
     resource.name = resource_name
     utilities.check_or_create_cf("OneFuse_Naming")
-    response_json["endpoint"] = onefuse_endpoint
+    response_json["endpoint"] = endpoint
     resource.OneFuse_Naming = json.dumps(response_json)
     resource.OneFuse_Tracking_Id = response_json.get("trackingId")
     resource.set_value_for_custom_field("onefuse_name", resource_name)
     resource.save()
+    return resource
 
 
 def onefuse_ipam(resource, utilities):
-    logger.debug(f"Provisioning IPAM as a Service for resource: "
-                 f"{resource}")
     properties_stack = run_property_toolkit(resource, utilities)
-    onefuse_endpoint = properties_stack["OneFuse_IpamPolicy_Nic0"].split(":")[0]
-    ipam_policy = properties_stack["OneFuse_IpamPolicy_Nic0"].split(":")[1]
-    set_progress(f"Starting OneFuse Naming Policy: "
-                 f"{ipam_policy}, Endpoint: {onefuse_endpoint}")
+    endpoint, policy = get_endpoint_and_policy(properties_stack)
+    set_progress(f"Starting OneFuse IPAM Policy: {policy}, Endpoint: {endpoint}")
     from xui.onefuse.globals import VERIFY_CERTS
-    ofm = CbOneFuseManager(onefuse_endpoint, VERIFY_CERTS, logger=logger)
+    ofm = CbOneFuseManager(endpoint, VERIFY_CERTS, logger=logger)
     properties_stack = run_property_toolkit(resource, utilities)
-    try:
-        tracking_id = properties_stack["OneFuse_Tracking_Id"]
-    except KeyError:
-        tracking_id = ""
+    tracking_id = get_tracking_id(properties_stack)
     name = resource.name
-    response_json = ofm.provision_ipam(ipam_policy, properties_stack, name,
+    response_json = ofm.provision_ipam(policy, properties_stack, name,
                                        tracking_id)
     utilities.check_or_create_cf("OneFuse_Ipam_Nic0")
     ip_address = response_json["ip_address"]
-    response_json["endpoint"] = onefuse_endpoint
+    response_json["endpoint"] = endpoint
     resource.OneFuse_Ipam_Nic0 = json.dumps(response_json)
     resource.OneFuse_Tracking_Id = response_json.get("trackingId")
     resource.set_value_for_custom_field("onefuse_ip", ip_address)
     resource.save()
+    return resource
 
 
 def onefuse_dns(resource, utilities):
-    logger.debug(f"Provisioning DNS as a Service for resource: "
-                 f"{resource}")
     properties_stack = run_property_toolkit(resource, utilities)
-    onefuse_endpoint = properties_stack["OneFuse_DnsPolicy_Nic0"].split(":")[0]
-    dns_policy = properties_stack["OneFuse_DnsPolicy_Nic0"].split(":")[1]
+    endpoint, policy = get_endpoint_and_policy(properties_stack)
     zones_str = properties_stack["OneFuse_DnsPolicy_Nic0"].split(":")[2]
     zones = []
     for zone in zones_str.split(","):
         zones.append(zone.strip())
-    set_progress(f"Starting OneFuse Naming Policy: "
-                 f"{dns_policy}, Endpoint: {onefuse_endpoint}")
+    set_progress(f"Starting OneFuse DNS Policy: {policy}, Endpoint: {endpoint}")
     from xui.onefuse.globals import VERIFY_CERTS
-    ofm = CbOneFuseManager(onefuse_endpoint, VERIFY_CERTS, logger=logger)
+    ofm = CbOneFuseManager(endpoint, VERIFY_CERTS, logger=logger)
     properties_stack = run_property_toolkit(resource, utilities)
-    try:
-        tracking_id = properties_stack["OneFuse_Tracking_Id"]
-    except KeyError:
-        tracking_id = ""
+    tracking_id = get_tracking_id(properties_stack)
     hostname = properties_stack["onefuse_name"]
     ip_address = properties_stack["onefuse_ip"]
-    response_json = ofm.provision_dns(dns_policy, properties_stack,
+    response_json = ofm.provision_dns(policy, properties_stack,
                                       hostname, ip_address, zones,
                                       tracking_id)
     utilities.check_or_create_cf("OneFuse_Dns_Nic0")
-    response_json["endpoint"] = onefuse_endpoint
+    response_json["endpoint"] = endpoint
     resource.OneFuse_Dns_Nic0 = json.dumps(response_json)
     resource.OneFuse_Tracking_Id = response_json.get("trackingId")
     dns_strings = create_dns_strings(response_json["records"])
     resource.set_value_for_custom_field("onefuse_dns", dns_strings)
     resource.save()
+    return resource
 
 
 def create_dns_strings(records):
@@ -121,29 +102,25 @@ def create_dns_strings(records):
 
 
 def onefuse_ad(resource, utilities):
-    logger.debug(f"Provisioning Active Directory as a Service for resource: "
-                 f"{resource}")
     properties_stack = run_property_toolkit(resource, utilities)
-    onefuse_endpoint = properties_stack["OneFuse_DnsPolicy_Nic0"].split(":")[0]
-    dns_policy = properties_stack["OneFuse_DnsPolicy_Nic0"].split(":")[1]
-    set_progress(f"Starting OneFuse Naming Policy: "
-                 f"{dns_policy}, Endpoint: {onefuse_endpoint}")
+    endpoint, policy = get_endpoint_and_policy(properties_stack)
+    set_progress(f"Starting OneFuse AD Policy: {policy}, Endpoint: {endpoint}")
     from xui.onefuse.globals import VERIFY_CERTS
-    ofm = CbOneFuseManager(onefuse_endpoint, VERIFY_CERTS, logger=logger)
+    ofm = CbOneFuseManager(endpoint, VERIFY_CERTS, logger=logger)
     properties_stack = run_property_toolkit(resource, utilities)
-    try:
-        tracking_id = properties_stack["OneFuse_Tracking_Id"]
-    except KeyError:
-        tracking_id = ""
+    tracking_id = get_tracking_id(properties_stack)
     name = resource.name
-    response_json = ofm.provision_ad(dns_policy, properties_stack, name,
+    response_json = ofm.provision_ad(policy, properties_stack, name,
                                      tracking_id)
+    ad_state = response_json["state"]
     # Move OU
-    response_json = ofm.move_ou(response_json["id"])
-    utilities.check_or_create_cf("OneFuse_Dns_Nic0")
-    response_json["endpoint"] = onefuse_endpoint
-    resource.OneFuse_Dns_Nic0 = json.dumps(response_json)
+    if ad_state and ad_state.value_as_string == 'build':
+        response_json = ofm.move_ou(response_json["id"])
+    utilities.check_or_create_cf("OneFuse_AD")
+    response_json["endpoint"] = endpoint
+    resource.OneFuse_AD = json.dumps(response_json)
     resource.OneFuse_Tracking_Id = response_json.get("trackingId")
+    resource.set_value_for_custom_field("onefuse_ou", response_json["finalOu"])
     resource.save()
 
 
@@ -196,3 +173,17 @@ def run_property_toolkit(resource, utilities):
         total_runs += 1
 
     return properties_stack
+
+
+def get_tracking_id(properties_stack):
+    try:
+        tracking_id = properties_stack["OneFuse_Tracking_Id"]
+    except KeyError:
+        tracking_id = ""
+    return tracking_id
+
+
+def get_endpoint_and_policy(properties_stack):
+    endpoint = properties_stack["OneFuse_NamingPolicy"].split(":")[0]
+    policy = properties_stack["OneFuse_NamingPolicy"].split(":")[1]
+    return endpoint, policy
