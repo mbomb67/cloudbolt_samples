@@ -27,7 +27,8 @@ def run(job, **kwargs):
 
 def onefuse_naming(resource, utilities):
     properties_stack = run_property_toolkit(resource, utilities)
-    endpoint, policy = get_endpoint_and_policy(properties_stack)
+    endpoint, policy = get_endpoint_and_policy(properties_stack,
+                                               "OneFuse_NamingPolicy")
     set_progress(f"Starting OneFuse Naming Policy: {policy}, Endpoint: {endpoint}")
     from xui.onefuse.globals import VERIFY_CERTS
     ofm = CbOneFuseManager(endpoint, VERIFY_CERTS, logger=logger)
@@ -46,7 +47,8 @@ def onefuse_naming(resource, utilities):
 
 def onefuse_ipam(resource, utilities):
     properties_stack = run_property_toolkit(resource, utilities)
-    endpoint, policy = get_endpoint_and_policy(properties_stack)
+    endpoint, policy = get_endpoint_and_policy(properties_stack,
+                                               "OneFuse_IpamPolicy_Nic0")
     set_progress(f"Starting OneFuse IPAM Policy: {policy}, Endpoint: {endpoint}")
     from xui.onefuse.globals import VERIFY_CERTS
     ofm = CbOneFuseManager(endpoint, VERIFY_CERTS, logger=logger)
@@ -67,7 +69,8 @@ def onefuse_ipam(resource, utilities):
 
 def onefuse_dns(resource, utilities):
     properties_stack = run_property_toolkit(resource, utilities)
-    endpoint, policy = get_endpoint_and_policy(properties_stack)
+    endpoint, policy = get_endpoint_and_policy(properties_stack,
+                                               "OneFuse_DnsPolicy_Nic0")
     zones_str = properties_stack["OneFuse_DnsPolicy_Nic0"].split(":")[2]
     zones = []
     for zone in zones_str.split(","):
@@ -103,7 +106,8 @@ def create_dns_strings(records):
 
 def onefuse_ad(resource, utilities):
     properties_stack = run_property_toolkit(resource, utilities)
-    endpoint, policy = get_endpoint_and_policy(properties_stack)
+    endpoint, policy = get_endpoint_and_policy(properties_stack,
+                                               "OneFuse_ADPolicy")
     set_progress(f"Starting OneFuse AD Policy: {policy}, Endpoint: {endpoint}")
     from xui.onefuse.globals import VERIFY_CERTS
     ofm = CbOneFuseManager(endpoint, VERIFY_CERTS, logger=logger)
@@ -147,7 +151,7 @@ def create_attribute(cf_name, cf_label, cf_type="STR", allow_multiple=False):
 def run_property_toolkit(resource, utilities):
     properties_stack = utilities.get_cb_object_properties(resource)
     total_runs = 0
-    onefuse_endpoint = properties_stack["OneFuse_NamingPolicy"].split(":")[0]
+    onefuse_endpoint = "OneFuseProd"
     calculated_max_runs = MAX_RUNS
     logger.debug(f'PTK running for Resource: {resource}, max runs set '
                  f'to: {calculated_max_runs}')
@@ -183,7 +187,7 @@ def get_tracking_id(properties_stack):
     return tracking_id
 
 
-def get_endpoint_and_policy(properties_stack):
-    endpoint = properties_stack["OneFuse_NamingPolicy"].split(":")[0]
-    policy = properties_stack["OneFuse_NamingPolicy"].split(":")[1]
+def get_endpoint_and_policy(properties_stack, policy_property):
+    endpoint = properties_stack[policy_property].split(":")[0]
+    policy = properties_stack[policy_property].split(":")[1]
     return endpoint, policy
