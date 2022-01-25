@@ -98,7 +98,7 @@ def onefuse_dns(resource, utilities):
 def create_dns_strings(records):
     dns_strings = []
     for record in records:
-        dns_string = (f'Type: {record[type]}, Name: {record["name"]}, '
+        dns_string = (f'Type: {record["type"]}, Name: {record["name"]}, '
                       f'Value: {record["value"]}')
         dns_strings.append(dns_string)
     return dns_strings
