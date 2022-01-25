@@ -58,7 +58,7 @@ def onefuse_ipam(resource, utilities):
     response_json = ofm.provision_ipam(policy, properties_stack, name,
                                        tracking_id)
     utilities.check_or_create_cf("OneFuse_Ipam_Nic0")
-    ip_address = response_json["ip_address"]
+    ip_address = response_json["ipAddress"]
     response_json["endpoint"] = endpoint
     resource.OneFuse_Ipam_Nic0 = json.dumps(response_json)
     resource.OneFuse_Tracking_Id = response_json.get("trackingId")
