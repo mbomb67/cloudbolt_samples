@@ -10,15 +10,15 @@ Parameters:
     ConstraintDescription: must be a valid EC2 instance type.
   SubnetId:
     Description: Select the Subnet where the VM should be deployed
-    Type: String
+    Type: AWS::EC2::Subnet::Id
     ConstraintDescription: Must be a valid subnet located in the selected AZ
   ImageId:
     Description: Select the Image to deploy
-    Type: String
+    Type: AWS::EC2::Image::Id
     ConstraintDescription: Must be a valid ImageId
   AvailabilityZone:
     Description: Availability Zone for the machine
-    Type: String
+    Type: AWS::EC2::AvailabilityZone::Name
     ConstraintDescription: Must be a valid AZ
 
 Resources:
