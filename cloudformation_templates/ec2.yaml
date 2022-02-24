@@ -16,16 +16,11 @@ Parameters:
     Description: Select the Image to deploy
     Type: AWS::EC2::Image::Id
     ConstraintDescription: Must be a valid ImageId
-  AvailabilityZone:
-    Description: Availability Zone for the machine
-    Type: AWS::EC2::AvailabilityZone::Name
-    ConstraintDescription: Must be a valid AZ
 
 Resources:
   MyInstance:
     Type: AWS::EC2::Instance
     Properties:
-      AvailabilityZone: !Ref AvailabilityZone
       ImageId: !Ref ImageId
       InstanceType: !Ref InstanceType
       SubnetId: !Ref SubnetId
