@@ -32,10 +32,4 @@ Outputs:
   PrivateDnsName:
     Description: Private DNS Name of the EC2 Instance
     Value: !GetAtt MyInstance.PrivateDnsName
-  PublicDnsName:
-    Description: Public DNS Name of the EC2 Instance
-    Value: !GetAtt MyInstance.PublicDnsName
-  PublicIp:
-    Description: Public IP Address of the EC2 Instance
-    Value: !GetAtt MyInstance.PublicIp
   
