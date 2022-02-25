@@ -7,7 +7,7 @@ Resources:
     Type: 'AWS::S3::Bucket'
     Properties:
       AccessControl: PublicRead
-      BucketName: public-bucket
+      BucketName: !Ref BucketName
       MetricsConfigurations:
         - Id: EntireBucket
       WebsiteConfiguration:
