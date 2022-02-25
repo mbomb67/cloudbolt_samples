@@ -24,3 +24,11 @@ Resources:
       ImageId: !Ref ImageId
       InstanceType: !Ref InstanceType
       SubnetId: !Ref SubnetId
+
+Outputs:
+  PrivateIpAddress:
+    Description: Private IP address of the EC2 Instance
+    Value: !GetAtt
+      - MyInstance
+      - PrivateIpAddress
+  
