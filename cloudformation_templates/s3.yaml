@@ -1,3 +1,7 @@
+Parameters:
+  BucketName:
+    Description: S3 Bucket Name - Must be globally unique
+    Type: String
 Resources:
   S3Bucket:
     Type: 'AWS::S3::Bucket'
