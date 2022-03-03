@@ -23,7 +23,7 @@ variable "ec2_name" {
   default = "mb-tst-123"
 }
 
-variable "availability_zone" {
+variable "subnet_id" {
   type = string
-  default = "us-east-2a"
+  default = "subnet-09918fa2d642e5cc3"
 }
