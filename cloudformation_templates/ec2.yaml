@@ -20,6 +20,11 @@ Parameters:
     Description: Select the key pair
     Type: AWS::EC2::KeyPair::KeyName
     ConstraintDescription: Must be a valid AWS Key Pair
+  NAme: 
+    Description: Name for the EC2 Instance
+    Type: String
+    AllowedPattern: ^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])$
+  
 
 Resources:
   MyInstance:
@@ -29,6 +34,9 @@ Resources:
       InstanceType: !Ref InstanceType
       SubnetId: !Ref SubnetId
       KeyName: !Ref KeyPair
+      Tags:
+        - Key: Name
+          Value: !Ref Name
 
 Outputs:
   PrivateIp:
