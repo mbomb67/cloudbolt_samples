@@ -1,4 +1,8 @@
 Parameters:
+  Name: 
+    Description: Name for the EC2 Instance
+    Type: String
+    AllowedPattern: ^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])$
   InstanceType:
     Description: WebServer EC2 instance type (has default, AllowedValues)
     Type: String
@@ -20,10 +24,6 @@ Parameters:
     Description: Select the key pair
     Type: AWS::EC2::KeyPair::KeyName
     ConstraintDescription: Must be a valid AWS Key Pair
-  NAme: 
-    Description: Name for the EC2 Instance
-    Type: String
-    AllowedPattern: ^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])$
   
 
 Resources:
