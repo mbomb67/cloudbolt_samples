@@ -16,6 +16,10 @@ Parameters:
     Description: Select the Image to deploy
     Type: AWS::EC2::Image::Id
     ConstraintDescription: Must be a valid ImageId
+  KeyPair:
+    Description: Select the key pair
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: Must be a valid AWS Key Pair
 
 Resources:
   MyInstance:
@@ -24,6 +28,7 @@ Resources:
       ImageId: !Ref ImageId
       InstanceType: !Ref InstanceType
       SubnetId: !Ref SubnetId
+      KeyName: !Ref KeyPair
 
 Outputs:
   PrivateIp:
