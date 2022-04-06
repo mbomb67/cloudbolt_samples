@@ -1,11 +1,5 @@
-variable "owner" {
-  type = string
-  default = "mikeb"
-}
-
-variable "group" {
-  type = string
-  default = "IT"
+variable "owner_group" {
+  type = map
 }
 
 variable "ami_id" {
