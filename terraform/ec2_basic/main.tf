@@ -5,7 +5,7 @@ resource "aws_instance" "server" {
 
     tags = {
         Name = var.ec2_name
-        group = var.group
-        owner = var.owner
+        group = var.owner_group.owner
+        owner = var.owner_group.group
     }
 }
