@@ -243,36 +243,37 @@ def _parse_state_file_for_server_ids(state_file_obj: TerraformStateFile,
         #      }
         # }
         if resource_dict.get("type") in TERRAFORM_VM_TYPES:
-            logger.info(
-                f"Found a terraform resource of type '{resource_dict.get('type')}'."
-            )
-            if version == 3:
-                vm_id = resource_dict.get("primary", {}).get("id")
-                if vm_id:
-                    server_ids.append(vm_id)
-            else:
-                logger.warning(
-                    f"Detected that the state file's version is "
-                    f"{version} and CloudBolt currently only supports"
-                    f"version 3."
+            if resource_dict.get("mode") == "managed":
+                logger.info(
+                    f"Found a terraform resource of type '{resource_dict.get('type')}'."
                 )
-                if version == 4:
-                    # We shouldn't be able to get to this step because Terraform
-                    # variable - action input parsing should fail first,
-                    # but we have left this code here for future support.
-                    instances = resource_dict.get("instances")
-                    for instance in instances:
-                        vm_id = instance.get("attributes").get("id")
-                        if resource_dict.get("type") == "aws_instance":
-                            tech_dict, rh = get_aws_tech_dict(instance, vm_id,
-                                                              resource)
-                            if tech_dict:
-                                vm_id = {
-                                    "id": vm_id,
-                                    "tech_dict": tech_dict,
-                                    "rh": rh
-                                }
+                if version == 3:
+                    vm_id = resource_dict.get("primary", {}).get("id")
+                    if vm_id:
                         server_ids.append(vm_id)
+                else:
+                    logger.warning(
+                        f"Detected that the state file's version is "
+                        f"{version} and CloudBolt currently only supports"
+                        f"version 3."
+                    )
+                    if version == 4:
+                        # We shouldn't be able to get to this step because Terraform
+                        # variable - action input parsing should fail first,
+                        # but we have left this code here for future support.
+                        instances = resource_dict.get("instances")
+                        for instance in instances:
+                            vm_id = instance.get("attributes").get("id")
+                            if resource_dict.get("type") == "aws_instance":
+                                tech_dict, rh = get_aws_tech_dict(instance, vm_id,
+                                                                  resource)
+                                if tech_dict:
+                                    vm_id = {
+                                        "id": vm_id,
+                                        "tech_dict": tech_dict,
+                                        "rh": rh
+                                    }
+                            server_ids.append(vm_id)
 
     return server_ids
 
