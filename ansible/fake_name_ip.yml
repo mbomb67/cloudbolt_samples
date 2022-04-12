@@ -1,0 +1,25 @@
+- name: Machine Name
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: construct hostname
+      set_fact:
+        ansible_hostname: "mb-test-{{ range(1000, 9999) | random }}"
+
+    - name: construct fqdn
+      set_fact:
+        ansible_fqdn: "{{ ansible_hostname }}.cblabsales.net"
+      when: ansible_hostname is defined
+
+    - name: existing DNS record
+      set_fact:
+        fqdn_resolves: "false"
+      when: ansible_fqdn is defined
+
+    - name: fetch next ip
+      set_fact:
+        ipaddr: "10.116.3.{{ range(200, 230) | random }}"
+
+    - name: fetch netmask
+      set_fact:
+        network_netmask: "255.255.255.0"        
