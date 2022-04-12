@@ -1,0 +1,8 @@
+- name: Machine Name
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    name: "Set stat test"
+    set_stats:
+        data:
+          test_var: 'my_test_var'
