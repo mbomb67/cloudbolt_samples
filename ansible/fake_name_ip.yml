@@ -22,4 +22,29 @@
 
     - name: fetch netmask
       set_fact:
-        network_netmask: "255.255.255.0"        
+        network_netmask: "255.255.255.0"
+    
+    - name: fake fact 1
+      set_fact:
+        fake_fact_1: "testing"      
+    
+    - name: fake fact 2
+      set_fact:
+        fake_fact_2: "testing"  
+    
+    - name: fake fact 3
+      set_fact:
+        fake_fact_3: "testing"  
+
+    - name: fake fact 4
+      set_fact:
+        fake_fact_4: "testing"  
+
+    - name: fake fact 5
+      set_fact:
+        fake_fact_5: "testing"  
+
+    - name: fake fact 6
+      set_fact:
+        fake_fact_6: "testing"  
+
