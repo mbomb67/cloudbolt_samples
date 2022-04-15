@@ -82,8 +82,6 @@ def pre_provision(
 
     # Parse each action input to see if the input includes Django templates and
     # render if it does
-    cf_values = resource.get_cf_values_as_dict()
-    resource_dict = resource.__dict__
     # logger.info(f'action_inputs: {action_inputs}, resource: {resource.id}, type: {type(resource)}')
     rendered_inputs = {}
     for key in action_inputs.keys():
