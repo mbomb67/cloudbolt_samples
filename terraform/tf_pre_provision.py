@@ -6,6 +6,8 @@ Perform setup logic before executing "constructive" Terraform subcommands
 import os
 import pwd
 from typing import Dict, Tuple, Union
+
+import json
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.template import Template, Context
@@ -14,6 +16,7 @@ from cbhooks.models import TerraformPlanHook, TerraformStateFile
 from cbhooks.services import TerraformFileService
 from common.methods import get_proxies, get_bypass_proxy_domains
 from jobs.models import Job
+from orders.models import BlueprintOrderItem
 from resources.models import Resource
 from servicecatalog.models import (
     RunTerraformPlanHookServiceItem,
@@ -86,9 +89,15 @@ def pre_provision(
     rendered_inputs = {}
     for key in action_inputs.keys():
         template = Template(action_inputs[key])
-        context = Context({"resource": resource})
+        context = {
+            "resource": resource,
+            "environment": get_environment_from_job(job),
+            "group": resource.group
+        }
+        context = Context(context)
         rendered_action_input = template.render(context)
-        # logger.info(f'Rendered action_input: {action_inputs[key]} to rendered_action_input: {rendered_action_input}')
+        if rendered_action_input != action_inputs[key]:
+            logger.info(f'Rendered action_input: {action_inputs[key]} to rendered_action_input: {rendered_action_input}')
         rendered_inputs[key] = rendered_action_input
 
     # Set the action inputs and Terraform variables.
@@ -157,3 +166,13 @@ def get_or_create_state_file(
         pass
 
     return state_file, created
+
+
+def get_environment_from_job(job):
+    params = json.loads(job.order_item._encrypted_arguments)["context"]
+    bpoi_id = params["blueprint_order_item"]
+    service_item_id = params["service_item_id"]
+    bpoi = BlueprintOrderItem.objects.get(id=bpoi_id)
+    bpia = bpoi.blueprintitemarguments_set.get(service_item__id=service_item_id)
+    env = bpia.environment
+    return env
