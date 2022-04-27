@@ -2,6 +2,12 @@
 Take an input CloudBolt Parameter, attempt to load it with JSON and YAML -
 allowing for the input of either JSON or YAML - then format and save the
 parameter value as a string formatted in JSON.
+
+Set the YAML_PARAM_NAME and OUTPUT_PARAM_NAME variables as the variables you
+need them to be. In theory, these could even be the same parameter, overwriting
+the original with the updated value.
+
+This is designed to be used as an orchestration action. 
 """
 
 import yaml
@@ -10,6 +16,7 @@ from json import JSONDecodeError
 
 YAML_PARAM_NAME = "yaml_param"
 OUTPUT_PARAM_NAME = "output_param"
+
 
 def run(job, **kwargs):
     server = job.server_set.first()
