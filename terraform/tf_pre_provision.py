@@ -8,6 +8,10 @@ import pwd
 from typing import Dict, Tuple, Union
 
 import json
+
+import html
+
+import ast
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.template import Template, Context
@@ -85,20 +89,38 @@ def pre_provision(
 
     # Parse each action input to see if the input includes Django templates and
     # render if it does
-    # logger.info(f'action_inputs: {action_inputs}, resource: {resource.id}, type: {type(resource)}')
+    logger.info(f'action_inputs: {action_inputs}, resource: {resource.id}, type: {type(resource)}')
     rendered_inputs = {}
     for key in action_inputs.keys():
-        template = Template(action_inputs[key])
-        context = {
-            "resource": resource,
-            "environment": get_environment_from_job(job),
-            "group": resource.group
-        }
-        context = Context(context)
-        rendered_action_input = template.render(context)
-        if rendered_action_input != action_inputs[key]:
-            logger.info(f'Rendered action_input: {action_inputs[key]} to rendered_action_input: {rendered_action_input}')
+        value = action_inputs[key]
+        if type(value) == str:
+            template = Template(value)
+            context = {
+                "resource": resource,
+                "environment": get_environment_from_job(job),
+                "group": resource.group
+            }
+            context = Context(context)
+            # Hit some instances where strings were rendering with unicode hex
+            # html.unescape fixes this
+            rendered_action_input = html.unescape(template.render(context))
+            if rendered_action_input != value:
+                logger.info(f'Rendered action_input: {value} to '
+                            f'rendered_action_input: {rendered_action_input}')
+            try:
+                # Doing a literal eval allows us to pass map and lists in to TF
+                logger.debug(f'{key} prior to literal eval: '
+                             f'{rendered_action_input}')
+                rendered_action_input = ast.literal_eval(rendered_action_input)
+                logger.debug(f'rendered type: {type(rendered_action_input)}')
+            except ValueError:
+                # Expected error for strings.
+                logger.debug(f"Value for {key} unable to be parsed")
+        else:
+            rendered_action_input = value
         rendered_inputs[key] = rendered_action_input
+
+    logger.debug(f"Rendered inputs: {rendered_inputs}")
 
     # Set the action inputs and Terraform variables.
     _ = resource.set_terraform_vars(state_file_obj.id, rendered_inputs)
