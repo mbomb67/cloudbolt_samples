@@ -7,6 +7,11 @@
         "maxLength": 11,
         "type": "String"
       },
+      "intInputTest": {
+        "type": "int",
+        "minValue": 5,
+        "maxValue": 10
+      },
       "storageSKU": {
         "defaultValue": "Standard_LRS",
         "allowedValues": [
