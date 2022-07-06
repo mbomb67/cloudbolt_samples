@@ -1,0 +1,11 @@
+# Create Firewall Rule Config
+
+- parameters:
+  non_prod_sources: {{non_prod_sources}}
+  non_prod_destinations: {{non_prod_destinations}} 
+  non_prod_services: {{non_prod_services}}
+  production_sources: {{production_sources}}
+  production_destinations: {{production_destinations}}
+  production_services: {{production_services}}
+  peak_bandwidth: {{peak_bandwidth}}
+  bandwidth_increase: {{bandwidth_increase}}
