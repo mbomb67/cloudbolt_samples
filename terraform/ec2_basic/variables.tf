@@ -27,3 +27,8 @@ variable "subnet_id" {
   type = string
   default = "subnet-09918fa2d642e5cc3"
 }
+
+variable "key_name" {
+  type = string
+  default = "se-demo"
+}
