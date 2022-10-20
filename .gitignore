@@ -132,3 +132,7 @@ dmypy.json
 **/.idea/
 
 desktop.ini
+terraform/ec2_basic/terraform.tfstate.backup
+terraform/ec2_basic/terraform.tfstate
+terraform/ec2_basic/.terraform/providers/registry.terraform.io/hashicorp/aws/3.75.2/windows_386/terraform-provider-aws_v3.75.2_x5.exe
+terraform/ec2_basic/.terraform.lock.hcl
