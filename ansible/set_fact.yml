@@ -1,7 +1,14 @@
 - name: Machine Name
   hosts: localhost
   gather_facts: false
+  vars:
+    -my_dict: {
+      'key1': 'value1',
+      'key2': 'value2',
+    }
   tasks:
     - name: "Set stat test"
       set_fact:
         test_var: 'my_test_var'
+        test_list: ['item1, item2, item3']
+        test_dict: {{my_dict}}
