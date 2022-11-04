@@ -11,4 +11,4 @@
       set_fact:
         test_var: 'my_test_var'
         test_list: ['item1, item2, item3']
-        test_dict: {{my_dict}}
+        test_dict: dict({{my_dict}})
