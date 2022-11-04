@@ -4,9 +4,18 @@
   tasks:
     - name: "Set stat test"
       set_fact:
-        test_var: 'my_test_var'
-        test_list: ['item1, item2, item3']
-        test_dict: {
+        fact_1: 'my_test_var'
+        fact_list: ['item1, item2, item3']
+        fact_dict: {
           'key1': 'value1',
           'key2': 'value2',
         }
+    - name: "Set stat test"
+      set_stats:
+        data:
+          stat_var: 'my_test_var'
+          stat_list: ['item1, item2, item3']
+          stat_dict: {
+            'key1': 'value1',
+            'key2': 'value2',
+          }
