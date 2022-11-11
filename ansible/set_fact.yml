@@ -10,6 +10,7 @@
           'key1': 'value1',
           'key2': 'value2',
         }
+        aws_server_ids: ['i-0f81858df22be457b','i-09c317ccee75fcef2']
     - name: "Set stat test"
       set_stats:
         data:
