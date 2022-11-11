@@ -19,3 +19,6 @@
             'key1': 'value1',
             'key2': 'value2',
           }
+    - name: "Fail job"
+      ansible.builtin.fail:
+        msg: Testing failure behavior.
