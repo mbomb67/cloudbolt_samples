@@ -11,6 +11,8 @@
           'key2': 'value2',
         }
         aws_server_ids: ['i-0f81858df22be457b','i-09c317ccee75fcef2']
+        tfe_module_source: 'dfgdgfdggfdg'
+        tfe_module_version: 'blcivubkjchdv'
     - name: "Set stat test"
       set_stats:
         data:
