@@ -1,0 +1,25 @@
+- name: Machine Name
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: "Set stat test"
+      set_fact:
+        fact_1: 'my_test_var'
+        fact_list: ['item1, item2, item3']
+        fact_dict: {
+          'key1': 'value1',
+          'key2': 'value2',
+        }
+        azure_server_ids: ['/subscriptions/91741cb3-7cb7-4a27-a01c-ff2daa32ace3/resourceGroups/mb-testing/providers/Microsoft.Compute/virtualMachines/mb-tst1','/subscriptions/91741cb3-7cb7-4a27-a01c-ff2daa32ace3/resourceGroups/mb-testing/providers/Microsoft.Compute/virtualMachines/mb-tst2']
+        tfe_module_source: 'dfgdgfdggfdg'
+        tfe_module_version: 'blcivubkjchdv'
+    - name: "Set stat test"
+      set_stats:
+        data:
+          stat_var: 'my_test_var'
+          stat_list: ['item1, item2, item3']
+          stat_dict: {
+            'key1': 'value1',
+            'key2': 'value2',
+          }
+          
