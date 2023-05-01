@@ -48,7 +48,7 @@
         {
             "action_name": "Teardown AWS lambda",
             "continue_on_failure": false,
-            "deploy_seq": 2,
+            "deploy_seq": -1,
             "description": null,
             "enabled_environments": [],
             "execute_in_parallel": false,
