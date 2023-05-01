@@ -1,0 +1,62 @@
+{
+    "any_group_can_deploy": true,
+    "auto_historical_resources": false,
+    "deployment_items": [
+        {
+            "action_name": "Create AWS lambda",
+            "continue_on_failure": false,
+            "deploy_seq": 1,
+            "description": null,
+            "enabled_environments": [],
+            "execute_in_parallel": false,
+            "id": "BDI-0q9b6jwz",
+            "name": "Create AWS lambda",
+            "run_on_scale_up": true,
+            "show_on_order_form": true,
+            "tier_type": "plugin"
+        }
+    ],
+    "description": "Aws Lambda blueprint used to create the lambda function using different runtime version as python, node, java. Used for the serverless application.",
+    "discovery_plugin": {
+        "href": "/api/v3/cmp/actions/OHK-1pavtj4e/",
+        "title": "AWS Lambda sync"
+    },
+    "favorited": false,
+    "icon": "download_08OSRci.jpeg",
+    "id": "BP-xpomp3ou",
+    "is_manageable": true,
+    "is_orderable": true,
+    "labels": [],
+    "last_updated": "2023-05-01",
+    "management_actions": [],
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Aws Lambda",
+    "resource_name_template": null,
+    "resource_type": {
+        "icon": "",
+        "id": "RT-1p6z3igs",
+        "label": "Cluster",
+        "lifecycle": "ACTIVE",
+        "list_view_columns": [],
+        "name": "service_64103e993fa34b9bb74efe00d160d6df",
+        "plural_label": null
+    },
+    "sequence": 0,
+    "show_recipient_field_on_order_form": false,
+    "teardown_items": [
+        {
+            "action_name": "Teardown AWS lambda",
+            "continue_on_failure": false,
+            "deploy_seq": 2,
+            "description": null,
+            "enabled_environments": [],
+            "execute_in_parallel": false,
+            "id": "BDI-v3rqmapd",
+            "name": "Teardown AWS lambda",
+            "run_on_scale_up": true,
+            "show_on_order_form": true,
+            "tier_type": "teardown_plugin"
+        }
+    ]
+}
