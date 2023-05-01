@@ -1,0 +1,14 @@
+{
+    "description": "",
+    "id": "OHK-mm1ijlkw",
+    "last_updated": "2023-05-01",
+    "max_retries": 0,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "S3 Bucket Delete Service",
+    "resource_technologies": [],
+    "script_filename": "S3 Bucket Delete Service Script.py",
+    "shared": false,
+    "target_os_families": [],
+    "type": "CloudBolt Plug-in"
+}
