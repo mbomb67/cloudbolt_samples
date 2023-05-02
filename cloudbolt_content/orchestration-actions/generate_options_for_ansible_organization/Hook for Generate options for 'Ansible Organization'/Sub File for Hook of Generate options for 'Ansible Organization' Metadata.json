@@ -1,0 +1,14 @@
+{
+    "description": null,
+    "id": "OHK-u543z8on",
+    "last_updated": "2023-05-02",
+    "max_retries": 0,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Generate options for 'Ansible Organization'",
+    "resource_technologies": [],
+    "script_filename": "Sub File for Hook of Generate options for 'Ansible Organization' Script.py",
+    "shared": false,
+    "target_os_families": [],
+    "type": "CloudBolt Plug-in"
+}

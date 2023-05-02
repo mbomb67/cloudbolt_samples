@@ -1,0 +1,15 @@
+{
+    "action_input_default_values": [],
+    "base_action_name": "Generate options for 'Ansible Organization'",
+    "continue_on_failure": false,
+    "description": null,
+    "enabled": true,
+    "hook_point": "Generated Parameter Options",
+    "id": "HPA-s4kidy70",
+    "last_updated": "2023-05-02",
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Generate options for 'Ansible Organization'",
+    "run_on_statuses": "",
+    "run_seq": 39
+}
