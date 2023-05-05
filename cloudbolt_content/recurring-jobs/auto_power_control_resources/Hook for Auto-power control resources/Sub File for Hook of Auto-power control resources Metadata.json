@@ -1,0 +1,14 @@
+{
+    "description": "This plug-in enables auto-powering off of resources' servers for periods of the day. It uses the deploy sequence of servers originally set in the blueprint for a given resource to determine the order in which servers will power on or off. The servers will be shown in the resource's 'Server' tab in the same sequence they were provisioned in. When powering off servers, the reverse order from the deploy sequence will be used. \n\nYou can manage this power schedule from the 'Power Schedule' tab on any resource that has servers. \n\nAlso note that the recurring job that runs this action is expected to be run every hour on the hour. If it is run on a different schedule, that will impact when servers are powered on or off. The power change will only happen if the job runs during the hour on the day when a power change is scheduled.",
+    "id": "OHK-noh8jit2",
+    "last_updated": "2023-05-05",
+    "max_retries": 0,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Auto-power control resources",
+    "resource_technologies": [],
+    "script_filename": "Sub File for Hook of Auto-power control resources Script.py",
+    "shared": false,
+    "target_os_families": [],
+    "type": "CloudBolt Plug-in"
+}
