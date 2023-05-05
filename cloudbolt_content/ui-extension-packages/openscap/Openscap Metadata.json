@@ -1,0 +1,19 @@
+{
+    "description": "\nThis package includes a server tab extension:\n- OpenScap\n",
+    "enabled": true,
+    "icon_url": "",
+    "id": "XUI-r77osvaz",
+    "label": "Openscap",
+    "last_updated": "2023-05-05",
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "openscap",
+    "package_contents": [
+        "__init__.py",
+        "forms.py",
+        "urls.py",
+        "views.py",
+        "templates/server_tab.html"
+    ],
+    "version": ""
+}
