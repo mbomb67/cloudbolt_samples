@@ -1,0 +1,17 @@
+{
+    "action_input_default_values": [],
+    "base_action_name": "Refresh MySQL Database Connection Info",
+    "dangerous": false,
+    "dialog_message": "",
+    "enabled": true,
+    "extra_classes": "fas fa-sync",
+    "id": "RSA-9l4q1i49",
+    "is_synchronous": false,
+    "label": "Refresh MySQL Database Connection Info",
+    "last_updated": "2023-05-10",
+    "list_view_visible": true,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "requires_approval": false,
+    "submit_button_label": ""
+}

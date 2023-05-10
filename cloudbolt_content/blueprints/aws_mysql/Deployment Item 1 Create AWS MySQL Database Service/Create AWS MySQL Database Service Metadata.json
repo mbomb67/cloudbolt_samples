@@ -1,0 +1,205 @@
+{
+    "action_inputs": [
+        {
+            "allow_multiple": false,
+            "available_all_servers": false,
+            "description": "",
+            "field_dependency_controlling_set": [],
+            "field_dependency_dependent_set": [
+                {
+                    "controlling-field": {
+                        "name": "aws_region_a717"
+                    },
+                    "custom-field-options": [],
+                    "dependency-type": "REGENOPTIONS",
+                    "dependent-field": {
+                        "name": "db_engine_version_a717"
+                    },
+                    "maximum": null,
+                    "minimum": null,
+                    "regex": ""
+                }
+            ],
+            "global_options": [],
+            "has_generated_options_support": true,
+            "hide_if_default_value": false,
+            "id": "CF-yh8ti2n1",
+            "label": "Region",
+            "name": "aws_region",
+            "placeholder": null,
+            "relevant_osfamilies": [],
+            "required": true,
+            "show_as_attribute": false,
+            "show_on_servers": false,
+            "type": "STR",
+            "value_pattern_string": null
+        },
+        {
+            "allow_multiple": false,
+            "available_all_servers": false,
+            "description": "",
+            "field_dependency_controlling_set": [
+                {
+                    "controlling-field": {
+                        "name": "aws_region_a717"
+                    },
+                    "custom-field-options": [],
+                    "dependency-type": "REGENOPTIONS",
+                    "dependent-field": {
+                        "name": "db_engine_version_a717"
+                    },
+                    "maximum": null,
+                    "minimum": null,
+                    "regex": ""
+                }
+            ],
+            "field_dependency_dependent_set": [
+                {
+                    "controlling-field": {
+                        "name": "db_engine_version_a717"
+                    },
+                    "custom-field-options": [],
+                    "dependency-type": "REGENOPTIONS",
+                    "dependent-field": {
+                        "name": "instance_class_a717"
+                    },
+                    "maximum": null,
+                    "minimum": null,
+                    "regex": ""
+                }
+            ],
+            "global_options": [],
+            "has_generated_options_support": true,
+            "hide_if_default_value": false,
+            "id": "CF-hyoar4ib",
+            "label": "Database Engine Version",
+            "name": "db_engine_version",
+            "placeholder": null,
+            "relevant_osfamilies": [],
+            "required": true,
+            "show_as_attribute": false,
+            "show_on_servers": false,
+            "type": "STR",
+            "value_pattern_string": null
+        },
+        {
+            "allow_multiple": false,
+            "available_all_servers": false,
+            "description": "Type a name for your DB instance. The name must be unique across all DB instances owned by your AWS account in the current AWS Region.\\r\\nThe DB instance identifier is case-insensitive, but is stored as all lowercase (as in \\\"mydbinstance\\\"). Constraints: 1 to 60 alphanumeric characters or hyphens. First character must be a letter. Can't contain two consecutive hyphens. Can't end with a hyphen.",
+            "field_dependency_controlling_set": [],
+            "field_dependency_dependent_set": [],
+            "global_options": [],
+            "has_generated_options_support": false,
+            "hide_if_default_value": false,
+            "id": "CF-x0y0sey7",
+            "label": "Database Identifier",
+            "maximum": "60.00",
+            "minimum": "1.00",
+            "name": "db_identifier",
+            "placeholder": null,
+            "relevant_osfamilies": [],
+            "required": true,
+            "show_as_attribute": false,
+            "show_on_servers": false,
+            "type": "STR",
+            "value_pattern_string": null
+        },
+        {
+            "allow_multiple": false,
+            "available_all_servers": false,
+            "description": "Constraints: At least 8 printable ASCII characters. Can't contain any of the following: / (slash), '(single quote), \\\"(double quote) and @ (at sign).",
+            "field_dependency_controlling_set": [],
+            "field_dependency_dependent_set": [],
+            "global_options": [],
+            "has_generated_options_support": false,
+            "hide_if_default_value": false,
+            "id": "CF-3vsptyoa",
+            "label": "Database Password",
+            "minimum": "8.00",
+            "name": "db_password",
+            "placeholder": null,
+            "relevant_osfamilies": [],
+            "required": true,
+            "show_as_attribute": false,
+            "show_on_servers": false,
+            "type": "STR",
+            "value_pattern_string": null
+        },
+        {
+            "allow_multiple": false,
+            "available_all_servers": false,
+            "description": "Type a login ID for the master user of your DB instance.\\r\\n1 to 16 alphanumeric characters. First character must be a letter.",
+            "field_dependency_controlling_set": [],
+            "field_dependency_dependent_set": [],
+            "global_options": [],
+            "has_generated_options_support": false,
+            "hide_if_default_value": false,
+            "id": "CF-9jj85yuy",
+            "label": "Database Username",
+            "maximum": "16.00",
+            "minimum": "1.00",
+            "name": "db_username",
+            "placeholder": null,
+            "relevant_osfamilies": [],
+            "required": true,
+            "show_as_attribute": false,
+            "show_on_servers": false,
+            "type": "STR",
+            "value_pattern_string": null
+        },
+        {
+            "allow_multiple": false,
+            "available_all_servers": false,
+            "description": "The compute and memory capacity of the DB instance, for example, db.m4.large.",
+            "field_dependency_controlling_set": [
+                {
+                    "controlling-field": {
+                        "name": "db_engine_version_a717"
+                    },
+                    "custom-field-options": [],
+                    "dependency-type": "REGENOPTIONS",
+                    "dependent-field": {
+                        "name": "instance_class_a717"
+                    },
+                    "maximum": null,
+                    "minimum": null,
+                    "regex": ""
+                }
+            ],
+            "field_dependency_dependent_set": [],
+            "global_options": [],
+            "has_generated_options_support": true,
+            "hide_if_default_value": false,
+            "id": "CF-ia67m2zv",
+            "label": "Instance Class",
+            "name": "instance_class",
+            "placeholder": null,
+            "relevant_osfamilies": [],
+            "required": true,
+            "show_as_attribute": false,
+            "show_on_servers": false,
+            "type": "STR",
+            "value_pattern_string": null
+        }
+    ],
+    "action_inputs_sequence": [
+        "db_identifier",
+        "aws_region",
+        "db_engine_version",
+        "instance_class",
+        "db_password",
+        "db_username"
+    ],
+    "description": "",
+    "id": "OHK-1j2hzeax",
+    "last_updated": "2023-05-10",
+    "max_retries": 0,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Create AWS MySQL Database Service",
+    "resource_technologies": [],
+    "script_filename": "Create AWS MySQL Database Service Script.py",
+    "shared": false,
+    "target_os_families": [],
+    "type": "CloudBolt Plug-in"
+}

@@ -1,0 +1,14 @@
+{
+    "description": "",
+    "id": "OHK-rgjv2qu4",
+    "last_updated": "2023-05-10",
+    "max_retries": 0,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Refresh MySQL Database Connection Info",
+    "resource_technologies": [],
+    "script_filename": "Sub File for Hook of Refresh MySQL Database Connection Info Script.py",
+    "shared": false,
+    "target_os_families": [],
+    "type": "CloudBolt Plug-in"
+}
