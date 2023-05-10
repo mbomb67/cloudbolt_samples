@@ -1,0 +1,58 @@
+{
+    "any_group_can_deploy": true,
+    "auto_historical_resources": false,
+    "deployment_items": [
+        {
+            "action_name": "ACI Network Build",
+            "continue_on_failure": false,
+            "deploy_seq": 1,
+            "description": null,
+            "enabled_environments": [],
+            "execute_in_parallel": false,
+            "id": "BDI-nxetco0t",
+            "name": "ACI Network Build",
+            "run_on_scale_up": true,
+            "show_on_order_form": true,
+            "tier_type": "plugin"
+        }
+    ],
+    "description": "",
+    "favorited": false,
+    "icon": "cisco_aci_hWvs0zX.png",
+    "id": "BP-m5ppmpsx",
+    "is_manageable": true,
+    "is_orderable": true,
+    "labels": [],
+    "last_updated": "2023-05-10",
+    "management_actions": [],
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "ACI Sample",
+    "resource_name_template": "",
+    "resource_type": {
+        "icon": "fab fa-network-wired",
+        "id": "RT-hc1i50k0",
+        "label": "ACI Network",
+        "lifecycle": "ACTIVE",
+        "list_view_columns": [],
+        "name": "aci_network",
+        "plural_label": null
+    },
+    "sequence": 0,
+    "show_recipient_field_on_order_form": false,
+    "teardown_items": [
+        {
+            "action_name": "ACI Network Teardown",
+            "continue_on_failure": false,
+            "deploy_seq": -1,
+            "description": null,
+            "enabled_environments": [],
+            "execute_in_parallel": false,
+            "id": "BDI-3uxg87k3",
+            "name": "ACI Network Teardown",
+            "run_on_scale_up": true,
+            "show_on_order_form": true,
+            "tier_type": "teardown_plugin"
+        }
+    ]
+}

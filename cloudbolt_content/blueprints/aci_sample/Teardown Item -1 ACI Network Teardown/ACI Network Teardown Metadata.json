@@ -1,0 +1,14 @@
+{
+    "description": "",
+    "id": "OHK-gthkpfqf",
+    "last_updated": "2023-05-10",
+    "max_retries": 0,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "ACI Network Teardown",
+    "resource_technologies": [],
+    "script_filename": "ACI Network Teardown Script.py",
+    "shared": true,
+    "target_os_families": [],
+    "type": "CloudBolt Plug-in"
+}
