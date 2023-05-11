@@ -1,0 +1,16 @@
+{
+    "action_input_default_values": [],
+    "allow_parallel_jobs": false,
+    "base_action_name": "Auto-power control resources",
+    "create_date": "2021-03-10 03:39:50.466883",
+    "description": "This recurring job enables auto-powering off of a resource's servers for periods of the day. This can be useful for multi-server applications where startup and shutdown order of servers is important. It uses the deploy sequence of server tiers originally set in the blueprint for a given resource to determine the order in which servers will power on or off. To use this feature, go to a resource's details page and configure a power schedule on the tab.When the action runs it will look for the ScheduledTime models created by you setting the power schedule, and use them to determine which resources should have their servers powered on or off at the current time. CloudBolt will use its own server time to judge whether it is the right time to power on and off VMs, so make sure you know what time it is on the CB server and that the timezone is right. Also note that this recurring job is expected to be run every hour on the hour. If it is run on a different schedule, that will impact when servers are powered on or off. The power change will only happen if the job runs during the hour on the day when a power change is scheduled.",
+    "enabled": false,
+    "id": "RJB-bm19dx5i",
+    "last_run": null,
+    "last_updated": "2023-05-05",
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Auto-power control resources",
+    "schedule": "0 * * * *",
+    "type": "orchestration_hook"
+}

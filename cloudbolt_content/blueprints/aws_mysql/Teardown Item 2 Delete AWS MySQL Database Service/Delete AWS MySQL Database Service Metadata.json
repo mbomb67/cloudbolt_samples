@@ -1,0 +1,14 @@
+{
+    "description": "",
+    "id": "OHK-760s5yg9",
+    "last_updated": "2023-05-10",
+    "max_retries": 0,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Delete AWS MySQL Database Service",
+    "resource_technologies": [],
+    "script_filename": "Delete AWS MySQL Database Service Script.py",
+    "shared": false,
+    "target_os_families": [],
+    "type": "CloudBolt Plug-in"
+}

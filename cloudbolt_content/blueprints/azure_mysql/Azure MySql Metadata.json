@@ -1,0 +1,98 @@
+{
+    "any_group_can_deploy": true,
+    "auto_historical_resources": false,
+    "deployment_items": [
+        {
+            "action_name": "Build an Azure MySql Database",
+            "continue_on_failure": false,
+            "deploy_seq": 1,
+            "description": null,
+            "enabled_environments": [],
+            "execute_in_parallel": false,
+            "id": "BDI-676q2xov",
+            "name": "Build an Azure MySql Database",
+            "run_on_scale_up": true,
+            "show_on_order_form": true,
+            "tier_type": "plugin"
+        }
+    ],
+    "description": "",
+    "discovery_plugin": {
+        "href": "/api/v3/cmp/actions/OHK-ta8zz2tf/",
+        "title": "Azure MySql Discovery"
+    },
+    "favorited": false,
+    "icon": "azuremysql_Eu82Oil_Pjk1zGH_TH87GPJ_TVlSXM8.jpg",
+    "id": "BP-9qekqvdf",
+    "is_manageable": true,
+    "is_orderable": true,
+    "labels": [
+        {
+            "color": null,
+            "id": "TAG-8c58wt2g",
+            "image": null,
+            "name": "Azure",
+            "parent": {
+                "color": null,
+                "id": "TAG-tlw9fk5h",
+                "image": null,
+                "name": "Technology Type",
+                "sequence": 0
+            },
+            "sequence": 0
+        },
+        {
+            "color": null,
+            "id": "TAG-vyk6hc1c",
+            "image": null,
+            "name": "MySQL",
+            "parent": {
+                "color": null,
+                "id": "TAG-nf5d2fpf",
+                "image": null,
+                "name": "Databases",
+                "parent": {
+                    "color": null,
+                    "id": "TAG-fc7v492p",
+                    "image": null,
+                    "name": "Public Cloud Services",
+                    "sequence": 0
+                },
+                "sequence": 0
+            },
+            "sequence": 0
+        }
+    ],
+    "last_updated": "2023-05-10",
+    "management_actions": [],
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Azure MySql",
+    "resource_name_template": null,
+    "resource_type": {
+        "icon": "",
+        "id": "RT-fe3i9hqn",
+        "label": "Database",
+        "lifecycle": "ACTIVE",
+        "list_view_columns": [],
+        "name": "Database_b9815262dc564d6f9a3d7a4d26d5380d",
+        "plural_label": "Databases"
+    },
+    "sequence": 0,
+    "show_recipient_field_on_order_form": false,
+    "teardown_items": [
+        {
+            "action_name": "Teardown for Azure MySql",
+            "continue_on_failure": false,
+            "deploy_seq": 2,
+            "description": null,
+            "enabled_environments": [],
+            "execute_in_parallel": false,
+            "id": "BDI-8v9d46kd",
+            "name": "Teardown for Azure MySql",
+            "run_on_scale_up": true,
+            "show_on_order_form": true,
+            "tier_type": "teardown_plugin"
+        }
+    ]
+}

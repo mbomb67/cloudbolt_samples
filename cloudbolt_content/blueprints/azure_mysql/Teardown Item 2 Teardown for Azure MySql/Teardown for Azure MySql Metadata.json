@@ -1,0 +1,14 @@
+{
+    "description": "",
+    "id": "OHK-laycqqiu",
+    "last_updated": "2023-05-10",
+    "max_retries": 0,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Teardown for Azure MySql",
+    "resource_technologies": [],
+    "script_filename": "Teardown for Azure MySql Script.py",
+    "shared": false,
+    "target_os_families": [],
+    "type": "CloudBolt Plug-in"
+}

@@ -1,0 +1,14 @@
+{
+    "description": "",
+    "id": "OHK-j7hcsz1v",
+    "last_updated": "2023-05-10",
+    "max_retries": 0,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Stop MySQL Database Instance",
+    "resource_technologies": [],
+    "script_filename": "Sub File for Hook of Stop MySQL Database Instance Script.py",
+    "shared": false,
+    "target_os_families": [],
+    "type": "CloudBolt Plug-in"
+}

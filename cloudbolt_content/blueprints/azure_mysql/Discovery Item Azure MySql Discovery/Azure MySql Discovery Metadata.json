@@ -1,0 +1,14 @@
+{
+    "description": "",
+    "id": "OHK-ta8zz2tf",
+    "last_updated": "2023-05-10",
+    "max_retries": 0,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Azure MySql Discovery",
+    "resource_technologies": [],
+    "script_filename": "Azure MySql Discovery Script.py",
+    "shared": false,
+    "target_os_families": [],
+    "type": "CloudBolt Plug-in"
+}

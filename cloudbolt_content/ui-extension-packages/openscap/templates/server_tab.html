@@ -1,0 +1,49 @@
+{% load account_tags %}
+{% load helper_tags %}
+{% load i18n %}
+{% load rh_tags %}
+{% load tag_tags %}
+{% load static %}
+<div class="row">
+    <div class="col-md-6">
+        <div id="panel-openscap-details" class="panel panel-default">
+            <div class="panel-heading">
+                <h4><i class="fa fa-cog" style="font-size:25px;color:#425365;"></i> Versions</h4></div>
+            <div class="panel-body">
+                <table width="100%" class="table table-striped">
+                    <tbody>
+                    {% for item in version_info %}
+                        <tr>
+                            <td class="shrink"><b>{{ item.label }} :</b></td>
+                            <td>{{ item.version }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div id="panel-openscap-run-evaluation" class="panel panel-default">
+            <div class="panel-heading">
+                <h4><i class="fa fa-book" style="font-size:25px;color:#E99800;"></i> Evaluations</h4>
+            </div>
+            <div class="panel-body">
+                <div class="btn-toolbar">
+                    <a class="btn btn-default open-dialog"
+                        href="{% url 'run_evaluation' server.id %}"
+                        ><span class="fa fa-play"></span>
+                        Run Evaluation
+                    </a>
+                </div>
+                <table width="100%" class="table table-striped">
+                    <tbody>
+                        {% for report in reports %}
+                        <tr><td class="shrink"><a href="{{ MEDIA_URL }}openscap_reports/{{ report }}" target="_blank">{{ report }}</a></td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

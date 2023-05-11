@@ -1,0 +1,56 @@
+{
+    "any_group_can_deploy": true,
+    "auto_historical_resources": false,
+    "blueprint_image": null,
+    "deployment_items": [
+        {
+            "all_environments_enabled": false,
+            "allowed_os_families": null,
+            "applications": null,
+            "deploy_seq": 1,
+            "description": "",
+            "enabled_environments": [
+                {
+                    "environment": {
+                        "href": "/api/v3/cmp/environments/ENV-dv1go7o7/",
+                        "title": "(vCenter) Cluster1 - Allegis"
+                    },
+                    "predefined_parameters": []
+                }
+            ],
+            "environment_selection_orchestration": null,
+            "execute_in_parallel": false,
+            "hostname_template": "mb-tst-00X",
+            "id": "BDI-99xb9e5s",
+            "name": "Server",
+            "os_build": null,
+            "restrict_applications": false,
+            "show_on_order_form": true,
+            "tier_type": "server"
+        }
+    ],
+    "description": "",
+    "favorited": false,
+    "id": "BP-uk7a9yiv",
+    "is_manageable": true,
+    "is_orderable": true,
+    "labels": [],
+    "last_updated": "2023-05-10",
+    "management_actions": [],
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "AG Test",
+    "resource_name_template": null,
+    "resource_type": {
+        "icon": "",
+        "id": "RT-0yro5q03",
+        "label": "Service",
+        "lifecycle": "ACTIVE",
+        "list_view_columns": [],
+        "name": "service",
+        "plural_label": null
+    },
+    "sequence": 0,
+    "show_recipient_field_on_order_form": false,
+    "teardown_items": []
+}

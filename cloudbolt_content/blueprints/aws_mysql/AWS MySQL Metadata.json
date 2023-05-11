@@ -1,0 +1,111 @@
+{
+    "any_group_can_deploy": true,
+    "auto_historical_resources": false,
+    "deployment_items": [
+        {
+            "action_name": "Create AWS MySQL Database Service",
+            "continue_on_failure": false,
+            "deploy_seq": 1,
+            "description": "This plugin will create a MySQL Database on AWS Cloud and resource on the CMP Instance.",
+            "enabled_environments": [],
+            "execute_in_parallel": false,
+            "id": "BDI-91fll9o3",
+            "name": "Create AWS MySQL Database Service",
+            "run_on_scale_up": true,
+            "show_on_order_form": true,
+            "tier_type": "plugin"
+        }
+    ],
+    "description": "Create, delete and synchronise AWS MySQL Database Instance",
+    "discovery_plugin": {
+        "href": "/api/v3/cmp/actions/OHK-l1v6ikw1/",
+        "title": "Discover AWS MySQL"
+    },
+    "favorited": false,
+    "icon": "aws_mysql_db_DKDzjhL.png",
+    "id": "BP-dsbw28sm",
+    "is_manageable": true,
+    "is_orderable": true,
+    "labels": [
+        {
+            "color": null,
+            "id": "TAG-ru6wbor6",
+            "image": null,
+            "name": "AWS",
+            "parent": {
+                "color": null,
+                "id": "TAG-tlw9fk5h",
+                "image": null,
+                "name": "Technology Type",
+                "sequence": 0
+            },
+            "sequence": 0
+        },
+        {
+            "color": null,
+            "id": "TAG-vyk6hc1c",
+            "image": null,
+            "name": "MySQL",
+            "parent": {
+                "color": null,
+                "id": "TAG-nf5d2fpf",
+                "image": null,
+                "name": "Databases",
+                "parent": {
+                    "color": null,
+                    "id": "TAG-fc7v492p",
+                    "image": null,
+                    "name": "Public Cloud Services",
+                    "sequence": 0
+                },
+                "sequence": 0
+            },
+            "sequence": 0
+        }
+    ],
+    "last_updated": "2023-05-10",
+    "management_actions": [
+        {
+            "enabled": true,
+            "label": "Refresh MySQL Database Connection Info"
+        },
+        {
+            "enabled": true,
+            "label": "Start MySQL Database Instance"
+        },
+        {
+            "enabled": true,
+            "label": "Stop MySQL Database Instance"
+        }
+    ],
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "AWS MySQL",
+    "resource_name_template": "MySQL Database",
+    "resource_type": {
+        "icon": "fas fa-database",
+        "id": "RT-6cyc1z4b",
+        "label": "Database",
+        "lifecycle": "ACTIVE",
+        "list_view_columns": [],
+        "name": "database",
+        "plural_label": null
+    },
+    "sequence": 0,
+    "show_recipient_field_on_order_form": false,
+    "teardown_items": [
+        {
+            "action_name": "Delete AWS MySQL Database Service",
+            "continue_on_failure": false,
+            "deploy_seq": 2,
+            "description": "This plugin will delete a MySQL Database from AWS Cloud and resource from the CMP Instance.",
+            "enabled_environments": [],
+            "execute_in_parallel": false,
+            "id": "BDI-7a13lzoa",
+            "name": "Delete AWS MySQL Database Service",
+            "run_on_scale_up": true,
+            "show_on_order_form": true,
+            "tier_type": "teardown_plugin"
+        }
+    ]
+}
