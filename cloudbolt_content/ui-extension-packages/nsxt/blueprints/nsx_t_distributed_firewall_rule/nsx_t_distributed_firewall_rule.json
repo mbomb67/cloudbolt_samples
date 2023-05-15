@@ -1,0 +1,38 @@
+{
+    "any-group-can-deploy": false,
+    "auto-historical-resources": false,
+    "build-items": [],
+    "description": "",
+    "favorited": false,
+    "icon": "vmware_nsx_featured_knQ7afZ_1wUahiG.jpg",
+    "is-orderable": true,
+    "labels": [
+      {
+        "model_name": "serviceblueprint",
+        "name": "NSX-T"
+      }
+    ],
+    "management-actions": [],
+    "name": "NSX-T Distributed Firewall Rule",
+    "resource-type": {
+        "icon": "glyphicon glyphicon-plus",
+        "label": "NSX-T Distributed Firewall Rule",
+        "lifecycle": "ACTIVE",
+        "list-view-columns": [],
+        "name": "nsxt_dfw_rule",
+        "plural-label": null
+    },
+    "sequence": 0,
+    "show-recipient-field-on-order-form": false,
+    "teardown-items": [
+        {
+            "action-name": "NSX-T Distributed Firewall Rule Teardown",
+            "continue-on-failure": false,
+            "deploy-seq": -1,
+            "description": null,
+            "execute-in-parallel": false,
+            "name": "NSX-T Distributed Firewall Rule Teardown",
+            "type": "teardown_plugin"
+        }
+    ]
+}

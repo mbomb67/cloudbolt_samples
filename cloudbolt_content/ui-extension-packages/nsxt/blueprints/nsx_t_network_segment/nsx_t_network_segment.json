@@ -1,0 +1,56 @@
+{
+    "any-group-can-deploy": true,
+    "auto-historical-resources": true,
+    "build-items": [
+        {
+            "action-name": "NSX-T Create Network Segment",
+            "continue-on-failure": false,
+            "deploy-seq": 1,
+            "description": null,
+            "execute-in-parallel": false,
+            "name": "NSX-T Create Network Segment",
+            "run-on-scale-up": true,
+            "show-on-order-form": true,
+            "type": "plugin"
+        }
+    ],
+    "description": "",
+    "favorited": false,
+    "icon": "vmware_nsx_featured.jpg",
+    "is-orderable": true,
+    "labels": [
+      {
+        "model_name": "serviceblueprint",
+        "name": "NSX-T"
+      }
+    ],
+    "management-actions": [
+        {
+            "enabled": "True",
+            "label": "Update Groups"
+        }
+    ],
+    "name": "NSX-T Network Segment",
+    "resource-name-template": "NSX-00X",
+    "resource-type": {
+        "icon": "glyphicon glyphicon-move",
+        "label": "NSX-T Network Segment",
+        "lifecycle": "ACTIVE",
+        "list-view-columns": [],
+        "name": "nsxt_network_segment",
+        "plural-label": null
+    },
+    "sequence": 0,
+    "show-recipient-field-on-order-form": false,
+    "teardown-items": [
+        {
+            "action-name": "Teardown NSX-T Network Segment",
+            "continue-on-failure": false,
+            "deploy-seq": -1,
+            "description": null,
+            "execute-in-parallel": false,
+            "name": "Teardown NSX-T Network Segment",
+            "type": "teardown_plugin"
+        }
+    ]
+}

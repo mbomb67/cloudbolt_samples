@@ -1,0 +1,9 @@
+{
+    "action-input-default-values": [],
+    "base-action-name": "Change NSX-T Group Members",
+    "dialog-message": "",
+    "enabled": "True",
+    "extra-classes": "glyphicon glyphicon-ok-circle",
+    "label": "Change NSX-T Group Members",
+    "submit-button-label": ""
+}
