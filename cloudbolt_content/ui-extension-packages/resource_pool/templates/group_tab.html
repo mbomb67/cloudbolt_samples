@@ -1,0 +1,49 @@
+<div class="container-fluid">
+    <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2 class="panel-title">Resource Pool Stats for Group: {{group.name}}</h2>
+            </div>
+            <div class="panel-body">
+                {% if rp_name %}
+                    <table class="dataTable no-footer table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Resource Handler</th>
+                                <th>Datacenter</th>
+                                <th>Cluster</th>
+                                <th>Resource Pool</th>
+                                <th>Used GB</th>
+                                <th>Limit GB</th>
+                                <th>% Used</th>
+                                <th>% Free</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rh, dcs in rps_data.items %}
+                            {% for dc, clusters in dcs.items %}
+                            {% for cluster, rps in clusters.items %}
+                            {% for rp, rp_data in rps.items %}
+                            <tr>
+                                <td>{{rh}}</td>
+                                <td>{{dc}}</td>
+                                <td>{{cluster}}</td>
+                                <td>{{rp}}</td>
+                                <td>{{rp_data.mem_usage_gb}} GB</td>
+                                <td>{{rp_data.mem_limit_gb}} GB</td>
+                                <td>{{rp_data.mem_percent_used}}%</td>
+                                <td>{{rp_data.mem_percent_free}}%</td>
+                            </tr>
+                            {% endfor %}
+                            {% endfor %}
+                            {% endfor %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="alert alert-info w-75">
+                        <p>No active OneFuse Integrations exist for Server: {{server.hostname}}</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+</div>
