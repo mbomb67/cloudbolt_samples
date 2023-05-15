@@ -1,0 +1,15 @@
+{
+    "action_input_default_values": [],
+    "base_action_name": "VMware Resource Pool Set by Group",
+    "continue_on_failure": false,
+    "description": null,
+    "enabled": false,
+    "hook_point": "Pre-Create Resource",
+    "id": "HPA-xqvvylby",
+    "last_updated": "2023-05-15",
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "VMware Resource Pool Set by Group",
+    "run_on_statuses": "",
+    "run_seq": 1501
+}
