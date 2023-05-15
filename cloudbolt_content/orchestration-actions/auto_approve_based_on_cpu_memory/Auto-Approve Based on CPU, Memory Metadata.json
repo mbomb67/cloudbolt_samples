@@ -1,0 +1,64 @@
+{
+    "action_input_default_values": [
+        {
+            "label": "Max Cpu",
+            "name": "max_cpu_a298",
+            "value": "4"
+        },
+        {
+            "label": "Max Mem Gb",
+            "name": "max_mem_gb_a298",
+            "value": "8"
+        }
+    ],
+    "action_inputs": [
+        {
+            "allow-multiple": false,
+            "available-all-servers": false,
+            "description": null,
+            "field-dependency-controlling-set": [],
+            "field-dependency-dependent-set": [],
+            "global-options": [],
+            "hide-if-default-value": false,
+            "label": "Max Cpu",
+            "name": "max_cpu",
+            "placeholder": null,
+            "relevant-osfamilies": [],
+            "required": true,
+            "show-as-attribute": false,
+            "show-on-servers": false,
+            "type": "STR",
+            "value-pattern-string": null
+        },
+        {
+            "allow-multiple": false,
+            "available-all-servers": false,
+            "description": null,
+            "field-dependency-controlling-set": [],
+            "field-dependency-dependent-set": [],
+            "global-options": [],
+            "hide-if-default-value": false,
+            "label": "Max Mem Gb",
+            "name": "max_mem_gb",
+            "placeholder": null,
+            "relevant-osfamilies": [],
+            "required": true,
+            "show-as-attribute": false,
+            "show-on-servers": false,
+            "type": "STR",
+            "value-pattern-string": null
+        }
+    ],
+    "base_action_name": "Auto-Approve Based on CPU, Memory",
+    "continue_on_failure": false,
+    "description": "",
+    "enabled": false,
+    "hook_point": "Post-Order Approval",
+    "id": "HPA-x6bxahyj",
+    "last_updated": "2023-05-15",
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Auto-Approve Based on CPU, Memory",
+    "run_on_statuses": "",
+    "run_seq": 3
+}
