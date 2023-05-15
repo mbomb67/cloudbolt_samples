@@ -1,0 +1,14 @@
+{
+    "description": "",
+    "id": "OHK-e9g5tyo6",
+    "last_updated": "2023-05-15",
+    "max_retries": 0,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Query ServiceNow for Order Approvals",
+    "resource_technologies": [],
+    "script_filename": "Sub File for Hook of Query ServiceNow for Order Approvals Script.py",
+    "shared": true,
+    "target_os_families": [],
+    "type": "CloudBolt Plug-in"
+}

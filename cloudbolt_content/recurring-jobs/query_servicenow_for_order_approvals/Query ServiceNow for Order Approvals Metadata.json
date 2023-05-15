@@ -1,0 +1,16 @@
+{
+    "action_input_default_values": [],
+    "allow_parallel_jobs": false,
+    "base_action_name": "Query ServiceNow for Order Approvals",
+    "create_date": "2022-01-21 03:37:31.830114",
+    "description": "",
+    "enabled": true,
+    "id": "RJB-qbt93mmc",
+    "last_run": "2023-05-15 09:20:00.313987",
+    "last_updated": "2023-05-15",
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Query ServiceNow for Order Approvals",
+    "schedule": "*/5 * * * *",
+    "type": "orchestration_hook"
+}
