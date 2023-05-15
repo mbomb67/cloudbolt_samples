@@ -1,0 +1,38 @@
+{
+    "action_input_default_values": [],
+    "action_inputs": [
+        {
+            "allow-multiple": false,
+            "available-all-servers": false,
+            "description": "The contents of the ad hoc script you would like to run",
+            "field-dependency-controlling-set": [],
+            "field-dependency-dependent-set": [],
+            "global-options": [],
+            "hide-if-default-value": false,
+            "label": "Script Contents",
+            "name": "script_contents",
+            "placeholder": null,
+            "relevant-osfamilies": [],
+            "required": true,
+            "show-as-attribute": false,
+            "show-on-servers": false,
+            "type": "CODE",
+            "value-pattern-string": null
+        }
+    ],
+    "base_action_name": "Ad Hoc Script",
+    "dangerous": false,
+    "dialog_message": "",
+    "enabled": true,
+    "extra_classes": "fas fa-code",
+    "id": "SVA-98mkc470",
+    "is_synchronous": false,
+    "label": "Ad Hoc Script",
+    "last_updated": "2023-05-15",
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "new_tab_url": null,
+    "requires_approval": false,
+    "sequence": 120,
+    "submit_button_label": ""
+}
