@@ -1,0 +1,48 @@
+{
+    "action-inputs": [
+        {
+            "allow-multiple": true,
+            "available-all-servers": false,
+            "description": "",
+            "field-dependency-controlling-set": [],
+            "field-dependency-dependent-set": [],
+            "global-options": [],
+            "hide-if-default-value": false,
+            "label": "Groups To Add",
+            "name": "groups_to_add",
+            "placeholder": null,
+            "relevant-osfamilies": [],
+            "required": false,
+            "show-as-attribute": false,
+            "show-on-servers": false,
+            "type": "STR",
+            "value-pattern-string": ""
+        },
+        {
+            "allow-multiple": true,
+            "available-all-servers": false,
+            "description": "",
+            "field-dependency-controlling-set": [],
+            "field-dependency-dependent-set": [],
+            "global-options": [],
+            "hide-if-default-value": false,
+            "label": "Groups To Remove",
+            "name": "groups_to_remove",
+            "placeholder": null,
+            "relevant-osfamilies": [],
+            "required": false,
+            "show-as-attribute": false,
+            "show-on-servers": false,
+            "type": "STR",
+            "value-pattern-string": ""
+        }
+    ],
+    "description": "Update the Groups that are able to request this network in CloudBolt",
+    "max-retries": 0,
+    "name": "Update Groups",
+    "resource-technologies": [],
+    "script-filename": "change_groups.py",
+    "shared": "True",
+    "target-os-families": [],
+    "type": "CloudBolt Plug-in"
+}

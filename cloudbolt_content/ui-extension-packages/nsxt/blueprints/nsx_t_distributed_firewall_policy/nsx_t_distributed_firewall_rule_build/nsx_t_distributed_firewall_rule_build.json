@@ -1,0 +1,9 @@
+{
+    "action-input-default-values": [],
+    "base-action-name": "NSX-T Distributed Firewall Rule Build",
+    "dialog-message": "",
+    "enabled": "True",
+    "extra-classes": "",
+    "label": "NSX-T Distributed Firewall Rule Build",
+    "submit-button-label": ""
+}

@@ -1,0 +1,10 @@
+{
+    "description": "",
+    "max-retries": 0,
+    "name": "NSX-T Group Teardown",
+    "resource-technologies": [],
+    "script-filename": "teardown_nsxt_group.py",
+    "shared": "True",
+    "target-os-families": [],
+    "type": "CloudBolt Plug-in"
+}

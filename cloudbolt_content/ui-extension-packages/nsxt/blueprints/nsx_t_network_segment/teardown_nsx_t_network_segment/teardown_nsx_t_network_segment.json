@@ -1,0 +1,10 @@
+{
+    "description": "",
+    "max-retries": 0,
+    "name": "Teardown NSX-T Network Segment",
+    "resource-technologies": [],
+    "script-filename": "teardown_segment.py",
+    "shared": "True",
+    "target-os-families": [],
+    "type": "CloudBolt Plug-in"
+}

@@ -1,0 +1,16 @@
+{
+    "description": "",
+    "id": "OHK-zekdb1xq",
+    "last_updated": "2023-05-15",
+    "max_retries": 0,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "VMware Resource Pool Set by Group",
+    "resource_technologies": [
+        "VMware vCenter"
+    ],
+    "script_filename": "Sub File for Hook of VMware Resource Pool Set by Group Script.py",
+    "shared": false,
+    "target_os_families": [],
+    "type": "CloudBolt Plug-in"
+}

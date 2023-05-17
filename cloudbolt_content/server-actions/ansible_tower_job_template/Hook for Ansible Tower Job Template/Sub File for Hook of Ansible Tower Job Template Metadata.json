@@ -1,13 +1,14 @@
 {
+    "action_inputs_sequence": [],
     "description": "",
-    "id": "OHK-gthkpfqf",
+    "id": "OHK-xw28np0u",
     "last_updated": "2023-05-15",
     "max_retries": 0,
     "maximum_version_required": "",
     "minimum_version_required": "8.6",
-    "name": "ACI Network Teardown",
+    "name": "Ansible Tower Job Template",
     "resource_technologies": [],
-    "script_filename": "ACI Network Teardown Script.py",
+    "script_filename": "Sub File for Hook of Ansible Tower Job Template Script.py",
     "shared": true,
     "target_os_families": [],
     "type": "CloudBolt Plug-in"

@@ -1,0 +1,17 @@
+{
+    "description": "\nThe Resource Pool XUI creates a tab on a CloudBolt Group that displays the\nResource Pool name and the current capacities associated with that Resource\nPool. The tab is only displayed if the group has a single value for the\ngroup_vmware_resourcepool custom field.\n\nThe Resource Pool XUI will then loop through every resource handler where the\ngroup has at least a single environment enabled and find all resource pools\ngrouped by Resource Handler > Datacenter > Cluster > Resource Pool. The\nResource Pool XUI will then display the Resource Pool name and the current\ncapacities associated with that Resource Pool.\n",
+    "enabled": true,
+    "icon_url": "",
+    "id": "XUI-fhrdd48u",
+    "label": "Resource Pool",
+    "last_updated": "2023-05-15",
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "resource_pool",
+    "package_contents": [
+        "views.py",
+        "__init__.py",
+        "templates/group_tab.html"
+    ],
+    "version": ""
+}

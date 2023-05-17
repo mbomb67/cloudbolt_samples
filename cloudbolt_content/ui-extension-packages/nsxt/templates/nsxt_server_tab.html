@@ -1,0 +1,35 @@
+{% load i18n %}
+
+{% comment %} If the server is part of the nsx-t inventory, allow functionality {% endcomment %}
+{% if nsxt_server %}
+<div class="btn-toolbar">
+    <a href="/add_security_tag/{{server.id}}/" class="btn btn-default open-dialog">
+        {% trans 'Add NSXT Security Tag' %}</a>
+</div>
+<div class="panel panel-default">
+
+    <div class="panel-heading">Current Tags</div>
+    <div class="panel-body">
+        <table width="100%" class="table table-striped">
+            <thead>
+            <th>Tags</th>
+            <th>&nbsp;</th>
+            </thead>
+            <tbody>
+            {% for tag in tags %}
+            <tr>
+                <td>{{ tag.value }}</td>
+                <td>
+                    <a title="{% trans 'Delete this sample message' %}"
+                       href="/remove_security_tag/{{ server.id }}/tag/{{ tag.value }}/"
+                       class="icon-delete open-dialog"></a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+</div>
+{% elif not nsxt_server %}
+<h1 style="margin:auto;">This server is not part of the NSX-T inventory</h1>
+{% endif %}

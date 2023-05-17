@@ -1,0 +1,55 @@
+{
+    "any-group-can-deploy": true,
+    "auto-historical-resources": false,
+    "build-items": [
+        {
+            "action-name": "NSX-T Group Build",
+            "continue-on-failure": false,
+            "deploy-seq": 1,
+            "description": null,
+            "execute-in-parallel": false,
+            "name": "NSX-T Group Build",
+            "run-on-scale-up": true,
+            "show-on-order-form": true,
+            "type": "plugin"
+        }
+    ],
+    "description": "Create an Infrastructure Group in NSX-T",
+    "favorited": false,
+    "icon": "vmware_nsx_featured_9TwdXMN.jpg",
+    "is-orderable": true,
+    "labels": [
+      {
+        "model_name": "serviceblueprint",
+        "name": "NSX-T"
+      }
+    ],
+    "management-actions": [
+        {
+            "enabled": "True",
+            "label": "Change NSX-T Group Members"
+        }
+    ],
+    "name": "NSX-T Group",
+    "resource-type": {
+        "icon": "glyphicon glyphicon-th",
+        "label": "NSX-T Group",
+        "lifecycle": "ACTIVE",
+        "list-view-columns": [],
+        "name": "nsxt_group",
+        "plural-label": null
+    },
+    "sequence": 0,
+    "show-recipient-field-on-order-form": false,
+    "teardown-items": [
+        {
+            "action-name": "NSX-T Group Teardown",
+            "continue-on-failure": false,
+            "deploy-seq": -1,
+            "description": null,
+            "execute-in-parallel": false,
+            "name": "NSX-T Group Teardown",
+            "type": "teardown_plugin"
+        }
+    ]
+}

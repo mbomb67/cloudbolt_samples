@@ -1,0 +1,9 @@
+{
+    "action-input-default-values": [],
+    "base-action-name": "Update Groups",
+    "dialog-message": "",
+    "enabled": "True",
+    "extra-classes": "glyphicon glyphicon-user",
+    "label": "Update Groups",
+    "submit-button-label": ""
+}

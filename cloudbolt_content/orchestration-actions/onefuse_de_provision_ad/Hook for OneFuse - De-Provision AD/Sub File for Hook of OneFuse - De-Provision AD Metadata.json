@@ -1,13 +1,13 @@
 {
-    "description": "",
-    "id": "OHK-gthkpfqf",
+    "description": "De-Provision the OneFuse Active Directory Module",
+    "id": "OHK-5sxtqf1m",
     "last_updated": "2023-05-15",
     "max_retries": 0,
     "maximum_version_required": "",
     "minimum_version_required": "8.6",
-    "name": "ACI Network Teardown",
+    "name": "OneFuse - De-Provision AD",
     "resource_technologies": [],
-    "script_filename": "ACI Network Teardown Script.py",
+    "script_filename": "Sub File for Hook of OneFuse - De-Provision AD Script.py",
     "shared": true,
     "target_os_families": [],
     "type": "CloudBolt Plug-in"

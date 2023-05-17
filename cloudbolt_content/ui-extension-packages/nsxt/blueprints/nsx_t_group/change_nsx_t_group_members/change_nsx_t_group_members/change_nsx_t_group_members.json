@@ -1,0 +1,48 @@
+{
+    "action-inputs": [
+        {
+            "allow-multiple": true,
+            "available-all-servers": false,
+            "description": "",
+            "field-dependency-controlling-set": [],
+            "field-dependency-dependent-set": [],
+            "global-options": [],
+            "hide-if-default-value": false,
+            "label": "Nsxt Groups",
+            "name": "nsxt_groups",
+            "placeholder": null,
+            "relevant-osfamilies": [],
+            "required": false,
+            "show-as-attribute": false,
+            "show-on-servers": false,
+            "type": "STR",
+            "value-pattern-string": ""
+        },
+        {
+            "allow-multiple": true,
+            "available-all-servers": false,
+            "description": "",
+            "field-dependency-controlling-set": [],
+            "field-dependency-dependent-set": [],
+            "global-options": [],
+            "hide-if-default-value": false,
+            "label": "Nsxt Segments",
+            "name": "nsxt_segments",
+            "placeholder": null,
+            "relevant-osfamilies": [],
+            "required": false,
+            "show-as-attribute": false,
+            "show-on-servers": false,
+            "type": "STR",
+            "value-pattern-string": ""
+        }
+    ],
+    "description": "Change the Membership of an NSX-T Group",
+    "max-retries": 0,
+    "name": "Change NSX-T Group Members",
+    "resource-technologies": [],
+    "script-filename": "change_members.py",
+    "shared": "True",
+    "target-os-families": [],
+    "type": "CloudBolt Plug-in"
+}

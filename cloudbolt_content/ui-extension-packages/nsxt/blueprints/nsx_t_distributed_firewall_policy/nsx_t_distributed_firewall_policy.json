@@ -1,0 +1,55 @@
+{
+    "any-group-can-deploy": true,
+    "auto-historical-resources": false,
+    "build-items": [
+        {
+            "action-name": "NSX-T Distributed Firewall Policy Build",
+            "continue-on-failure": false,
+            "deploy-seq": 1,
+            "description": null,
+            "execute-in-parallel": false,
+            "name": "NSX-T Distributed Firewall Policy Build",
+            "run-on-scale-up": true,
+            "show-on-order-form": true,
+            "type": "plugin"
+        }
+    ],
+    "description": "Create a Policy on the NSX-T Distributed Firewall",
+    "favorited": false,
+    "icon": "vmware_nsx_featured_9H4lD06.jpg",
+    "is-orderable": true,
+    "labels": [
+      {
+        "model_name": "serviceblueprint",
+        "name": "NSX-T"
+      }
+    ],
+    "management-actions": [
+        {
+            "enabled": "True",
+            "label": "NSX-T Distributed Firewall Rule Build"
+        }
+    ],
+    "name": "NSX-T Distributed Firewall Policy",
+    "resource-type": {
+        "icon": "glyphicon glyphicon-th-list",
+        "label": "NSX-T Distributed Firewall Policy",
+        "lifecycle": "ACTIVE",
+        "list-view-columns": [],
+        "name": "nsxt_dfx_policy",
+        "plural-label": "NSX-T Distributed Firewall Policies"
+    },
+    "sequence": 0,
+    "show-recipient-field-on-order-form": false,
+    "teardown-items": [
+        {
+            "action-name": "NSX-T Distributed Firewall Policy Teardown",
+            "continue-on-failure": false,
+            "deploy-seq": -1,
+            "description": null,
+            "execute-in-parallel": false,
+            "name": "NSX-T Distributed Firewall Policy Teardown",
+            "type": "teardown_plugin"
+        }
+    ]
+}

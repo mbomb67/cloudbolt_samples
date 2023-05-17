@@ -1,0 +1,15 @@
+{
+    "action_input_default_values": [],
+    "base_action_name": "OneFuse - De-Provision AD",
+    "continue_on_failure": false,
+    "description": "De-Provision the OneFuse Active Directory Module",
+    "enabled": true,
+    "hook_point": "Post-Delete",
+    "id": "HPA-2hatlftw",
+    "last_updated": "2023-05-15",
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "OneFuse - De-Provision AD",
+    "run_on_statuses": "",
+    "run_seq": 1200
+}

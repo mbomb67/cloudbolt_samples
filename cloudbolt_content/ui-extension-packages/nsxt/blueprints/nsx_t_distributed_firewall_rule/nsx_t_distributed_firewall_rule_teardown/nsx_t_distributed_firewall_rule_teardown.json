@@ -1,0 +1,10 @@
+{
+    "description": "",
+    "max-retries": 0,
+    "name": "NSX-T Distributed Firewall Rule Teardown",
+    "resource-technologies": [],
+    "script-filename": "teardown_nsxt_dfw_rule.py",
+    "shared": "True",
+    "target-os-families": [],
+    "type": "CloudBolt Plug-in"
+}
