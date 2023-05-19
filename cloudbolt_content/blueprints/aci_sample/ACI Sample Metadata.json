@@ -14,6 +14,19 @@
             "run_on_scale_up": true,
             "show_on_order_form": true,
             "tier_type": "plugin"
+        },
+        {
+            "action_name": "Add Applications If True",
+            "continue_on_failure": false,
+            "deploy_seq": 2,
+            "description": null,
+            "enabled_environments": [],
+            "execute_in_parallel": false,
+            "id": "BDI-zgymofe1",
+            "name": "Add Applications If True",
+            "run_on_scale_up": true,
+            "show_on_order_form": true,
+            "tier_type": "plugin"
         }
     ],
     "description": "",
