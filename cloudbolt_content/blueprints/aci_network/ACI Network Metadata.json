@@ -43,7 +43,7 @@
     "is_manageable": true,
     "is_orderable": true,
     "labels": [],
-    "last_updated": "2023-05-15",
+    "last_updated": "2023-06-02",
     "management_actions": [],
     "maximum_version_required": "",
     "minimum_version_required": "8.6",
@@ -61,7 +61,7 @@
             "label": "Password",
             "name": "svc_password",
             "options": [
-                "JG52mPM9yhZFJUvultU36Q==<CB_DELIM>d0ACeTfGxPeL/gf9d9lMPA==<CB_DELIM>JGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTMscD00JEdRQ1cyZjFRWXg4TFVaZ1lBQmtoQXckMkplQ2NwUlFVamhMZ21WZitQMCtpUQ=="
+                "iIjNYZyChkSibsK7zpe5Dw==<CB_DELIM>Z8ABmVmpu3FVfTCQrSRIVw==<CB_DELIM>JGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTMscD00JEV3emJQL0NiNmYwVmRHeXdoTktHSFEkSkNHUXZhcEZtY3lYN2xXMk5WZTRoZw=="
             ],
             "placeholder": null,
             "relevant_osfamilies": [],
