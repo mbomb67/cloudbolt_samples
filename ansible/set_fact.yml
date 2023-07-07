@@ -2,9 +2,9 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: "Set stat test"
+    - name: "Set fact test"
       set_fact:
-        fact_1: 'my_test_var'
+        fact_1: 'my_test_fact'
         fact_list: ['item1, item2, item3']
         fact_dict: {
           'key1': 'value1',
