@@ -1,36 +1,43 @@
 {
     "any_group_can_deploy": true,
     "auto_historical_resources": false,
+    "blueprint_image": null,
     "deployment_items": [
         {
-            "action_name": "Ansible Tower Ad-Hoc",
+            "action_name": "testing83",
             "continue_on_failure": false,
             "deploy_seq": 1,
-            "description": "",
+            "description": null,
             "enabled_environments": [],
             "execute_in_parallel": false,
-            "id": "BDI-lalcacel",
-            "name": "Ansible Tower Ad-Hoc",
-            "parameter_defaults": [
-                {
-                    "label": "Ansible Tower",
-                    "name": "ansible_tower_a590",
-                    "value": "14"
-                }
-            ],
+            "id": "BDI-54zb9jp9",
+            "name": "testing83",
             "run_on_scale_up": true,
-            "show_on_order_form": false,
+            "show_on_order_form": true,
             "tier_type": "plugin"
         },
         {
-            "action_name": "Import Network",
+            "action_name": "testing83",
             "continue_on_failure": false,
             "deploy_seq": 2,
             "description": null,
             "enabled_environments": [],
             "execute_in_parallel": false,
-            "id": "BDI-fgduq866",
-            "name": "Import Network",
+            "id": "BDI-2751rkf8",
+            "name": "testing83",
+            "run_on_scale_up": true,
+            "show_on_order_form": true,
+            "tier_type": "plugin"
+        },
+        {
+            "action_name": "testing83",
+            "continue_on_failure": false,
+            "deploy_seq": 3,
+            "description": null,
+            "enabled_environments": [],
+            "execute_in_parallel": false,
+            "id": "BDI-3956fpbi",
+            "name": "testing83",
             "run_on_scale_up": true,
             "show_on_order_form": true,
             "tier_type": "plugin"
@@ -38,8 +45,7 @@
     ],
     "description": "",
     "favorited": false,
-    "icon": "cisco_aci_OnjQKRQ.png",
-    "id": "BP-zlue3wip",
+    "id": "BP-lwnuuskz",
     "is_manageable": true,
     "is_orderable": true,
     "labels": [],
@@ -47,7 +53,7 @@
     "management_actions": [],
     "maximum_version_required": "",
     "minimum_version_required": "8.6",
-    "name": "ACI Network",
+    "name": "Action Bulk Inputs",
     "parameters": [
         {
             "allow_multiple": false,
@@ -58,33 +64,9 @@
             "field_dependency_controlling_set": [],
             "field_dependency_dependent_set": [],
             "global_options": [],
-            "label": "Password",
-            "name": "svc_password",
-            "options": [
-                "iIjNYZyChkSibsK7zpe5Dw==<CB_DELIM>Z8ABmVmpu3FVfTCQrSRIVw==<CB_DELIM>JGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTMscD00JEV3emJQL0NiNmYwVmRHeXdoTktHSFEkSkNHUXZhcEZtY3lYN2xXMk5WZTRoZw=="
-            ],
-            "placeholder": null,
-            "relevant_osfamilies": [],
-            "required": true,
-            "show_as_attribute": false,
-            "show_on_servers": false,
-            "type": "PWD",
-            "value_pattern_string": null
-        },
-        {
-            "allow_multiple": false,
-            "available_all_servers": false,
-            "constraints": "Unconstrained",
-            "description": "",
-            "destination": "Both",
-            "field_dependency_controlling_set": [],
-            "field_dependency_dependent_set": [],
-            "global_options": [],
-            "label": "Username",
-            "name": "svc_username",
-            "options": [
-                "svc_user"
-            ],
+            "label": "Param1",
+            "name": "param1",
+            "options": [],
             "placeholder": null,
             "relevant_osfamilies": [],
             "required": true,
@@ -102,14 +84,14 @@
             "field_dependency_controlling_set": [],
             "field_dependency_dependent_set": [],
             "global_options": [],
-            "label": "VLAN",
-            "name": "wap_vlan",
+            "label": "Param2",
+            "name": "param2",
             "options": [],
             "placeholder": null,
             "relevant_osfamilies": [],
             "required": true,
             "show_as_attribute": false,
-            "show_on_servers": true,
+            "show_on_servers": false,
             "type": "STR",
             "value_pattern_string": null
         }
@@ -126,19 +108,5 @@
     },
     "sequence": 0,
     "show_recipient_field_on_order_form": false,
-    "teardown_items": [
-        {
-            "action_name": "Ansible Tower Ad-Hoc",
-            "continue_on_failure": false,
-            "deploy_seq": 3,
-            "description": null,
-            "enabled_environments": [],
-            "execute_in_parallel": false,
-            "id": "BDI-if9xxkv7",
-            "name": "Ansible Tower Ad-Hoc",
-            "run_on_scale_up": true,
-            "show_on_order_form": true,
-            "tier_type": "teardown_plugin"
-        }
-    ]
+    "teardown_items": []
 }
