@@ -4,19 +4,16 @@
   tasks:
     - name: "Set fact test"
       set_fact:
-        fact_1: 'my_test_fact'
+        fact_1: '{{extravar1}}'
         fact_list: ['item1, item2, item3']
         fact_dict: {
           'key1': 'value1',
           'key2': 'value2',
         }
-        aws_server_ids: ['i-0f81858df22be457b','i-09c317ccee75fcef2']
-        tfe_module_source: 'dfgdgfdggfdg'
-        tfe_module_version: 'blcivubkjchdv'
     - name: "Set stat test"
       set_stats:
         data:
-          stat_var: 'my_test_var'
+          stat_var: '{{extravar2}}'
           stat_list: ['item1, item2, item3']
           stat_dict: {
             'key1': 'value1',
