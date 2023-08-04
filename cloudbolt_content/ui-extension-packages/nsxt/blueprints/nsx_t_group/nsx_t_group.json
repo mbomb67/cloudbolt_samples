@@ -1,55 +1,72 @@
 {
-    "any-group-can-deploy": true,
-    "auto-historical-resources": false,
-    "build-items": [
+    "any_group_can_deploy": true,
+    "auto_historical_resources": false,
+    "blueprint_image": "/static/uploads/blueprints/vmware_nsx_featured_9TwdXMN_xuCsWS5.jpg",
+    "custom_form": "FRM-lrrb7d39",
+    "deployment_items": [
         {
-            "action-name": "NSX-T Group Build",
-            "continue-on-failure": false,
-            "deploy-seq": 1,
+            "action_name": "NSX-T Group Build",
+            "continue_on_failure": false,
+            "deploy_seq": 1,
             "description": null,
-            "execute-in-parallel": false,
+            "execute_in_parallel": false,
+            "id": "BDI-sw9gd2dm",
             "name": "NSX-T Group Build",
-            "run-on-scale-up": true,
-            "show-on-order-form": true,
-            "type": "plugin"
+            "run_on_scale_up": true,
+            "show_on_order_form": true,
+            "tier_type": "plugin"
         }
     ],
     "description": "Create an Infrastructure Group in NSX-T",
     "favorited": false,
-    "icon": "vmware_nsx_featured_9TwdXMN.jpg",
-    "is-orderable": true,
+    "has_custom_form": true,
+    "icon": "vmware_nsx_featured_9TwdXMN_xuCsWS5.jpg",
+    "id": "BP-ci3t51c8",
+    "is_manageable": true,
+    "is_orderable": true,
     "labels": [
-      {
-        "model_name": "serviceblueprint",
-        "name": "NSX-T"
-      }
-    ],
-    "management-actions": [
         {
-            "enabled": "True",
+            "color": null,
+            "id": "TAG-i7za52gb",
+            "image": null,
+            "name": "NSX-T",
+            "sequence": 0
+        }
+    ],
+    "last_updated": "2023-08-03",
+    "management_actions": [
+        {
+            "enabled": true,
             "label": "Change NSX-T Group Members"
         }
     ],
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
     "name": "NSX-T Group",
-    "resource-type": {
+    "resource_name_template": "",
+    "resource_type": {
         "icon": "glyphicon glyphicon-th",
+        "id": "RT-4x8kv3wo",
         "label": "NSX-T Group",
         "lifecycle": "ACTIVE",
-        "list-view-columns": [],
+        "list_view_columns": [],
         "name": "nsxt_group",
-        "plural-label": null
+        "plural_label": null
     },
     "sequence": 0,
-    "show-recipient-field-on-order-form": false,
-    "teardown-items": [
+    "show_recipient_field_on_order_form": false,
+    "teardown_items": [
         {
-            "action-name": "NSX-T Group Teardown",
-            "continue-on-failure": false,
-            "deploy-seq": -1,
+            "action_name": "NSX-T Group Teardown",
+            "continue_on_failure": false,
+            "deploy_seq": -1,
             "description": null,
-            "execute-in-parallel": false,
+            "execute_in_parallel": false,
+            "id": "BDI-cepl5y8i",
             "name": "NSX-T Group Teardown",
-            "type": "teardown_plugin"
+            "run_on_scale_up": true,
+            "show_on_order_form": true,
+            "tier_type": "teardown_plugin"
         }
     ]
 }

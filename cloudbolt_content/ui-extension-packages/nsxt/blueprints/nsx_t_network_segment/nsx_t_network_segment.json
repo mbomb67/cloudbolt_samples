@@ -1,56 +1,70 @@
 {
-    "any-group-can-deploy": true,
-    "auto-historical-resources": true,
-    "build-items": [
+    "any_group_can_deploy": true,
+    "auto_historical_resources": true,
+    "blueprint_image": "/static/uploads/blueprints/vmware_nsx_featured_lvONGcY.jpg",
+    "deployment_items": [
         {
-            "action-name": "NSX-T Create Network Segment",
-            "continue-on-failure": false,
-            "deploy-seq": 1,
+            "action_name": "NSX-T Create Network Segment",
+            "continue_on_failure": false,
+            "deploy_seq": 1,
             "description": null,
-            "execute-in-parallel": false,
+            "execute_in_parallel": false,
+            "id": "BDI-wvzkxwkz",
             "name": "NSX-T Create Network Segment",
-            "run-on-scale-up": true,
-            "show-on-order-form": true,
-            "type": "plugin"
+            "run_on_scale_up": true,
+            "show_on_order_form": true,
+            "tier_type": "plugin"
         }
     ],
     "description": "",
     "favorited": false,
-    "icon": "vmware_nsx_featured.jpg",
-    "is-orderable": true,
+    "icon": "vmware_nsx_featured_lvONGcY.jpg",
+    "id": "BP-wfjsu4t2",
+    "is_manageable": true,
+    "is_orderable": true,
     "labels": [
-      {
-        "model_name": "serviceblueprint",
-        "name": "NSX-T"
-      }
-    ],
-    "management-actions": [
         {
-            "enabled": "True",
+            "color": null,
+            "id": "TAG-i7za52gb",
+            "image": null,
+            "name": "NSX-T",
+            "sequence": 0
+        }
+    ],
+    "last_updated": "2023-08-03",
+    "management_actions": [
+        {
+            "enabled": true,
             "label": "Update Groups"
         }
     ],
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
     "name": "NSX-T Network Segment",
-    "resource-name-template": "NSX-00X",
-    "resource-type": {
+    "resource_name_template": "NSX-00X",
+    "resource_type": {
         "icon": "glyphicon glyphicon-move",
+        "id": "RT-fwft7kjq",
         "label": "NSX-T Network Segment",
         "lifecycle": "ACTIVE",
-        "list-view-columns": [],
+        "list_view_columns": [],
         "name": "nsxt_network_segment",
-        "plural-label": null
+        "plural_label": null
     },
     "sequence": 0,
-    "show-recipient-field-on-order-form": false,
-    "teardown-items": [
+    "show_recipient_field_on_order_form": false,
+    "teardown_items": [
         {
-            "action-name": "Teardown NSX-T Network Segment",
-            "continue-on-failure": false,
-            "deploy-seq": -1,
+            "action_name": "Teardown NSX-T Network Segment",
+            "continue_on_failure": false,
+            "deploy_seq": -1,
             "description": null,
-            "execute-in-parallel": false,
+            "execute_in_parallel": false,
+            "id": "BDI-7cb19d76",
             "name": "Teardown NSX-T Network Segment",
-            "type": "teardown_plugin"
+            "run_on_scale_up": true,
+            "show_on_order_form": true,
+            "tier_type": "teardown_plugin"
         }
     ]
 }

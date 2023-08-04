@@ -20,6 +20,13 @@ This XUI will also create several Blueprints for Self-Service of NSX-T component
   - NSX-T Distributed Firewall Rule (Child Blueprint)
 - NSX-T Network Segment
 
+### Blueprint Pre-Requisites
+- Create a Resource Handler that is connected to an NSX-T instance
+- Create a Network Virtualization Platform to connect to NSX-T. Docs:
+    https://docs.cloudbolt.io/articles/#!cloudbolt-latest-docs/managing-network-virtualization
+- Ensure that you have at least a single Environment configured with an NSX
+  Transport Zone, and a Tier 1 Router
+
 ## Blueprint Import Behavior
 Blueprint import behavior for the XUI can be controlled by changing the properties in the `/var/opt/cloudbolt/proserv/xui/xui_versions.json` file. The XUI only runs initial configuration once per new version. This is controlled by matching the `current_version` number in the config file with the `__version__` number in the `__init__.py` file. If you need configuration to re-run, just reset the `current_version` number in the config file to a lower number than the `__version__` number in the `__init__.py` file, then `systemctl restart httpd`
 
@@ -36,4 +43,3 @@ When a Blueprint is using a remote source, the actions are only updated at initi
             "OVERWRITE_EXISTING_BLUEPRINTS": true
         }
     }
-

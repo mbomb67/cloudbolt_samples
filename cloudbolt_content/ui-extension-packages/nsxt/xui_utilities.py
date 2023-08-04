@@ -386,6 +386,21 @@ class NSXTXUIAPIWrapper(NSXTAPIWrapper):
         response = self.patch(url, data)
         return response
 
+    def update_group_expression(self, expression: list, group_id,
+                                domain="default"):
+        """
+        Updates an expression for an NSX Group
+        :param expression: List of criteria to include in the expression
+        :param group_id: ID of the NSX Group
+        :param domain: Domain of the group
+        """
+        url = f"/policy/api/v1/infra/domains/{domain}/groups/{group_id}"
+        data = {
+            "expression": expression
+        }
+        response = self.patch(url, data)
+        return response
+
     def search(self, query_list: list):
         """
         Search for a resource with a query list. Queries should be passed in as
@@ -585,20 +600,25 @@ def get_cf_values(resource, cf_name):
     return values
 
 
-def update_expression_parameters(resource, nsxt_groups, nsxt_segments):
+def update_expression_parameters(resource, nsxt_groups: list=None,
+                                 nsxt_segments: list=None, ip_addresses=[],
+                                 mac_addresses=[]):
     cfvm = resource.get_cfv_manager()
     # Remove original values
-    gs = cfvm.filter(field__name="nsxt_group_refs")
-    for g in gs:
-        cfvm.remove(g)
-    segs = cfvm.filter(field__name="nsxt_segment_refs")
-    for seg in segs:
-        cfvm.remove(seg)
+    for field in ["nsxt_group_refs", "nsxt_segment_refs", "ip_addresses",
+                  "mac_addresses"]:
+        values = cfvm.filter(field__name=field)
+        for value in values:
+            cfvm.remove(value)
     # Add new values
     for nsxt_group in nsxt_groups:
         create_cfv_add_to_list(cfvm, "nsxt_group_refs", nsxt_group)
     for nsxt_segment in nsxt_segments:
         create_cfv_add_to_list(cfvm, "nsxt_segment_refs", nsxt_segment)
+    for ip_address in ip_addresses:
+        create_cfv_add_to_list(cfvm, "nsxt_ip_addresses", ip_address)
+    for mac_address in mac_addresses:
+        create_cfv_add_to_list(cfvm, "nsxt_mac_addresses", mac_address)
 
 
 def create_cfv_add_to_list(cfvm, cf_name, value):

@@ -1,10 +1,14 @@
 {
     "description": "",
-    "max-retries": 0,
+    "id": "OHK-9m7uk7rf",
+    "last_updated": "2023-08-03",
+    "max_retries": 0,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
     "name": "Teardown NSX-T Network Segment",
-    "resource-technologies": [],
-    "script-filename": "teardown_segment.py",
-    "shared": "True",
-    "target-os-families": [],
+    "resource_technologies": [],
+    "script_filename": "teardown_segment.py",
+    "shared": true,
+    "target_os_families": [],
     "type": "CloudBolt Plug-in"
 }

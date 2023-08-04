@@ -10,6 +10,7 @@ from cbhooks.models import CloudBoltHook
 from servicecatalog.models import ServiceBlueprint
 from resourcehandlers.models import ResourceHandler
 from xui.nsxt.xui_utilities import check_for_nsxt, setup_nsx_tags
+from django.utils.text import slugify
 from utilities.logger import ThreadLogger
 
 logger = ThreadLogger(__name__)
@@ -31,7 +32,7 @@ try:
     OVERWRITE_EXISTING_BLUEPRINTS = get_data_from_config_file(
         'OVERWRITE_EXISTING_BLUEPRINTS')
 except Exception:
-    OVERWRITE_EXISTING_BLUEPRINTS = False
+    OVERWRITE_EXISTING_BLUEPRINTS = True
 # From what I can tell, when a Blueprint is using a remote source, the actions
 # are only updated at initial creation. Setting this toggle to True would
 # set each action to use the remote source - forcing update of the actions when
@@ -40,7 +41,7 @@ try:
     SET_ACTIONS_TO_REMOTE_SOURCE = get_data_from_config_file(
         'SET_ACTIONS_TO_REMOTE_SOURCE')
 except Exception:
-    SET_ACTIONS_TO_REMOTE_SOURCE = False
+    SET_ACTIONS_TO_REMOTE_SOURCE = True
 
 
 def run_config(xui_version):
@@ -53,7 +54,7 @@ def run_config(xui_version):
                 logger.info(f"Current Version: {current_version} is less than"
                             f" {xui_version}. Running config.")
                 config_needed = True
-    except FileNotFoundError:
+    except Exception:
         logger.info(f"Config file not found going to run configuration")
         config_needed = True
     if config_needed:
@@ -85,8 +86,17 @@ def configure_blueprints():
         with open(bp_path, 'r') as f:
             bp_json = json.load(f)
         bp_name = bp_json["name"]
-        bp, created = ServiceBlueprint.objects.get_or_create(name=bp_name,
-                                                             status='ACTIVE')
+        try:
+            bp_global_id = bp_json["id"]
+        except KeyError:
+            logger.warning(f"Blueprint: {bp_name} does not have an id. "
+                           f"Skipping")
+            continue
+
+        bp, created = ServiceBlueprint.objects.get_or_create(
+            global_id=bp_global_id,
+            status='ACTIVE'
+        )
         if not created:
             if OVERWRITE_EXISTING_BLUEPRINTS:
                 logger.info(f"Overwriting Blueprint: {bp_name}")
@@ -105,7 +115,7 @@ def set_actions_to_remote_source(bp_dir, bp_json, created):
         logger.info(f'Starting to set actions to remote source for BP: '
                     f'{bp_json["name"]}')
         action_datas = []  # Tuples of (action_name, action_path)
-        elements = ["teardown-items", "build-items", "management-actions"]
+        elements = ["teardown_items", "deployment_items", "management_actions"]
         for element in elements:
             for action in bp_json[element]:
                 action_data = get_action_data(action, bp_dir, element)
@@ -132,16 +142,16 @@ def set_action_to_remote_source(action_name, action_path):
 
 
 def get_action_data(action, bp_dir, item_name):
-    if item_name == 'management-actions':
-        action_name = action["label"].replace(" ", "_").replace("-",
-                                                                "_").lower()
-        json_file = f'{action_name}.json'
-        json_path = f'{bp_dir}{action_name}/{action_name}/{json_file}'
+    if item_name == 'management_actions':
+        file_name = slugify(action["label"]).replace("-", "_")
+        json_file = f'{file_name}.json'
+        json_path = f'{bp_dir}{file_name}/{file_name}/{json_file}'
+        action_name = action["label"]
     else:
-        action_name = action["name"].replace(" ", "_").replace("-",
-                                                               "_").lower()
-        json_file = f'{action_name}.json'
-        json_path = f'{bp_dir}{action_name}/{action_name}.json'
+        file_name = slugify(action["name"]).replace("-", "_")
+        json_file = f'{file_name}.json'
+        json_path = f'{bp_dir}{file_name}/{file_name}.json'
+        action_name = action["name"]
     action_path = get_action_path_from_json(json_path, json_file)
     return action_name, action_path
 
@@ -149,7 +159,7 @@ def get_action_data(action, bp_dir, item_name):
 def get_action_path_from_json(json_path, json_file):
     with open(json_path, 'r') as f:
         action_json = json.load(f)
-    action_file = action_json["script-filename"]
+    action_file = action_json["script_filename"]
     action_path = json_path.replace(json_file, action_file)
     return action_path
 

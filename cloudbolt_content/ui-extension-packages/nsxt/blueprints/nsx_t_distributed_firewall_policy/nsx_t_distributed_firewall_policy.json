@@ -1,55 +1,70 @@
 {
-    "any-group-can-deploy": true,
-    "auto-historical-resources": false,
-    "build-items": [
+    "any_group_can_deploy": true,
+    "auto_historical_resources": false,
+    "blueprint_image": "/static/uploads/blueprints/vmware_nsx_featured_9H4lD06_G2NzHzL.jpg",
+    "deployment_items": [
         {
-            "action-name": "NSX-T Distributed Firewall Policy Build",
-            "continue-on-failure": false,
-            "deploy-seq": 1,
+            "action_name": "NSX-T Distributed Firewall Policy Build",
+            "continue_on_failure": false,
+            "deploy_seq": 1,
             "description": null,
-            "execute-in-parallel": false,
+            "execute_in_parallel": false,
+            "id": "BDI-1baw6o2o",
             "name": "NSX-T Distributed Firewall Policy Build",
-            "run-on-scale-up": true,
-            "show-on-order-form": true,
-            "type": "plugin"
+            "run_on_scale_up": true,
+            "show_on_order_form": true,
+            "tier_type": "plugin"
         }
     ],
     "description": "Create a Policy on the NSX-T Distributed Firewall",
     "favorited": false,
-    "icon": "vmware_nsx_featured_9H4lD06.jpg",
-    "is-orderable": true,
+    "icon": "vmware_nsx_featured_9H4lD06_G2NzHzL.jpg",
+    "id": "BP-rbtedre0",
+    "is_manageable": true,
+    "is_orderable": true,
     "labels": [
-      {
-        "model_name": "serviceblueprint",
-        "name": "NSX-T"
-      }
-    ],
-    "management-actions": [
         {
-            "enabled": "True",
+            "color": null,
+            "id": "TAG-i7za52gb",
+            "image": null,
+            "name": "NSX-T",
+            "sequence": 0
+        }
+    ],
+    "last_updated": "2023-08-02",
+    "management_actions": [
+        {
+            "enabled": true,
             "label": "NSX-T Distributed Firewall Rule Build"
         }
     ],
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
     "name": "NSX-T Distributed Firewall Policy",
-    "resource-type": {
+    "resource_name_template": "",
+    "resource_type": {
         "icon": "glyphicon glyphicon-th-list",
+        "id": "RT-gztw3ps9",
         "label": "NSX-T Distributed Firewall Policy",
         "lifecycle": "ACTIVE",
-        "list-view-columns": [],
+        "list_view_columns": [],
         "name": "nsxt_dfx_policy",
-        "plural-label": "NSX-T Distributed Firewall Policies"
+        "plural_label": "NSX-T Distributed Firewall Policies"
     },
     "sequence": 0,
-    "show-recipient-field-on-order-form": false,
-    "teardown-items": [
+    "show_recipient_field_on_order_form": false,
+    "teardown_items": [
         {
-            "action-name": "NSX-T Distributed Firewall Policy Teardown",
-            "continue-on-failure": false,
-            "deploy-seq": -1,
+            "action_name": "NSX-T Distributed Firewall Policy Teardown",
+            "continue_on_failure": false,
+            "deploy_seq": -1,
             "description": null,
-            "execute-in-parallel": false,
+            "execute_in_parallel": false,
+            "id": "BDI-mdibfz47",
             "name": "NSX-T Distributed Firewall Policy Teardown",
-            "type": "teardown_plugin"
+            "run_on_scale_up": true,
+            "show_on_order_form": true,
+            "tier_type": "teardown_plugin"
         }
     ]
 }

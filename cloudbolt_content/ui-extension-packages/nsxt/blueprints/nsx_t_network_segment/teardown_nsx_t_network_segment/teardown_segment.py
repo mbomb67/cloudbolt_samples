@@ -39,7 +39,7 @@ def delete_cloudbolt_components(resource):
                        f'be found. Assuming that it is already deleted, '
                        f'proceeding to delete any NSX networks.')
         return None
-    nics = network.servernetworkcard_set.all(server__status="ACTIVE")
+    nics = network.servernetworkcard_set.filter(server__status="ACTIVE")
     # Check to be sure no servers exist on the network before deleting.
     if len(nics) > 0:
         servers = ', '.join(nic.server.hostname for nic in nics)

@@ -1,38 +1,52 @@
 {
-    "any-group-can-deploy": false,
-    "auto-historical-resources": false,
-    "build-items": [],
+    "any_group_can_deploy": true,
+    "auto_historical_resources": false,
+    "blueprint_image": "/static/uploads/blueprints/vmware_nsx_featured_knQ7afZ_1wUahiG_TCoaQLq.jpg",
+    "deployment_items": [],
     "description": "",
     "favorited": false,
-    "icon": "vmware_nsx_featured_knQ7afZ_1wUahiG.jpg",
-    "is-orderable": true,
+    "icon": "vmware_nsx_featured_knQ7afZ_1wUahiG_TCoaQLq.jpg",
+    "id": "BP-9yxmhapi",
+    "is_manageable": true,
+    "is_orderable": false,
     "labels": [
-      {
-        "model_name": "serviceblueprint",
-        "name": "NSX-T"
-      }
+        {
+            "color": null,
+            "id": "TAG-i7za52gb",
+            "image": null,
+            "name": "NSX-T",
+            "sequence": 0
+        }
     ],
-    "management-actions": [],
+    "last_updated": "2023-08-03",
+    "management_actions": [],
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
     "name": "NSX-T Distributed Firewall Rule",
-    "resource-type": {
+    "resource_name_template": "",
+    "resource_type": {
         "icon": "glyphicon glyphicon-plus",
+        "id": "RT-e5x53k4v",
         "label": "NSX-T Distributed Firewall Rule",
         "lifecycle": "ACTIVE",
-        "list-view-columns": [],
+        "list_view_columns": [],
         "name": "nsxt_dfw_rule",
-        "plural-label": null
+        "plural_label": null
     },
     "sequence": 0,
-    "show-recipient-field-on-order-form": false,
-    "teardown-items": [
+    "show_recipient_field_on_order_form": false,
+    "teardown_items": [
         {
-            "action-name": "NSX-T Distributed Firewall Rule Teardown",
-            "continue-on-failure": false,
-            "deploy-seq": -1,
+            "action_name": "NSX-T Distributed Firewall Rule Teardown",
+            "continue_on_failure": false,
+            "deploy_seq": -1,
             "description": null,
-            "execute-in-parallel": false,
+            "execute_in_parallel": false,
+            "id": "BDI-qooo5rmz",
             "name": "NSX-T Distributed Firewall Rule Teardown",
-            "type": "teardown_plugin"
+            "run_on_scale_up": true,
+            "show_on_order_form": true,
+            "tier_type": "teardown_plugin"
         }
     ]
 }

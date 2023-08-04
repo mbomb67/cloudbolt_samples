@@ -172,19 +172,45 @@ def add_cloudbolt_network(rh, network_segment, resource):
                 f'{network_segment["display_name"]}')
     network, _ = VmwareNetwork.objects.get_or_create(
         name=network_segment["display_name"],
-        network=port_group.name,
+        network=port_group._moId,
         dvSwitch=port_group.config.distributedVirtualSwitch.name,
         portgroup_key=port_group.key,
         netmask=netmask,
         gateway=gateway,
-        addressing_schema="static",
+        addressing_schema="dhcp",
         adapterType="VMXN3"
     )
     network.resource_handler.add(rh.cast())
     create_custom_field("nsx_t_network_id", "CloudBolt Network ID", "STR",
                         namespace="nsx_t_blueprint")
+    add_clusters_to_network(rh, network)
+
     resource.set_value_for_custom_field("nsx_t_network_id", network.id)
     return network
+
+
+def add_clusters_to_network(rh, network):
+    all_networks = rh.cast().get_all_networks()
+    for net in all_networks:
+        if net["name"] == network.name:
+            clusters = net["clusters"]
+    if not clusters:
+        logger.warning(f"Clusters for network: {network.name} not found")
+        return
+    # Yes - newtorks is correct - a misspelling in the src code
+    network.add_clusters_to_newtorks(clusters)
+    # Removing add network to environments - want this to only be available to
+    # the group
+    # add_network_to_environments(rh, network, clusters)
+    return network
+
+
+def add_network_to_environments(rh, network, clusters):
+    for cluster in clusters:
+        envs = rh.environment_set.filter(vmware_cluster=cluster)
+        for env in envs:
+            env.add_network(network)
+        logger.info(f'Added network: {network.name} to environment: {env.name}')
 
 
 def wait_for_port_group(rh, segment_id):
@@ -208,6 +234,7 @@ def wait_for_port_group(rh, segment_id):
 def get_netmask_from_cidr(cidr):
     host_bits = 32 - int(cidr)
     netmask = socket.inet_ntoa(struct.pack('!I', (1 << 32) - (1 << host_bits)))
+    return netmask
 
 
 def get_port_group_from_segment_id(rh, segment_id):

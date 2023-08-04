@@ -48,6 +48,11 @@ def run(job, resource=None, **kwargs):
     # Action Inputs
     nsxt_group_refs = list({{ nsxt_groups }})
     nsxt_segment_refs = list({{ nsxt_segments }})
+    # TODO: Update to use membership criteria
+    # ip_address_servers = list()
+    # mac_address_servers = list()
+    # ip_addresses = get_nsxt_ip_addresses(ip_address_servers)
+    # mac_addresses = get_nsxt_mac_addresses(mac_address_servers)
     nsxt_group_id = resource.nsxt_group_id
     rh = ResourceHandler.objects.get(id=resource.nsxt_rh_id)
     nsx = NSXTXUIAPIWrapper(rh)
@@ -55,3 +60,17 @@ def run(job, resource=None, **kwargs):
     paths = nsxt_group_refs + nsxt_segment_refs
     nsx.create_or_update_expression(paths, nsxt_group_id)
     return "SUCCESS", "", ""
+
+
+def get_nsxt_ip_addresses(servers):
+    ips = []
+    for server in servers:
+        ips.append(server.ip)
+    return ips
+
+
+def get_nsxt_mac_addresses(servers):
+    macs = []
+    for server in servers:
+        macs.append(server.mac)
+    return macs

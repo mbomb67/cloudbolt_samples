@@ -3,7 +3,7 @@ from utilities.logger import ThreadLogger
 
 logger = ThreadLogger(__name__)
 
-__version__ = "1.0"
+__version__ = "1.2"
 __credits__ = 'Cloudbolt Software, Inc.'
 
 # explicit list of extensions to be included instead of

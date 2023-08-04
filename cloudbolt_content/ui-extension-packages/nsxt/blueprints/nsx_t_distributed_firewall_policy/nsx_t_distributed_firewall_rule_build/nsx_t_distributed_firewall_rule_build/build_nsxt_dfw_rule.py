@@ -4,6 +4,7 @@ Build item for creating an NSX-T Distributed Firewall Rule 1
 from c2_wrapper import create_custom_field
 from common.methods import set_progress
 from infrastructure.models import Environment
+from resourcehandlers.models import ResourceHandler
 from resources.models import Resource
 from servicecatalog.models import ServiceBlueprint
 from xui.nsxt.xui_utilities import NSXTXUIAPIWrapper, \
@@ -19,20 +20,26 @@ def generate_options_for_action(field=None, **kwargs):
 
 
 def generate_options_for_source_groups(field=None, **kwargs):
-    group = kwargs.get('resource').group
+    resource = kwargs.get('resource')
+    if not resource:
+        logger.info(f'Resource could not be determined')
+        return None
+    group = resource.group
     kwargs['group'] = group
     return generate_options_for_nsxt_groups(field, **kwargs)
 
 
 def generate_options_for_destination_groups(field=None, **kwargs):
-    group = kwargs.get('resource').group
+    resource = kwargs.get('resource')
+    if not resource:
+        logger.info(f'Resource could not be determined')
+        return None
+    group = resource.group
     kwargs['group'] = group
     return generate_options_for_nsxt_groups(field, **kwargs)
 
-
 def run(job, resource=None, *args, **kwargs):
     # Action Inputs
-    env_id = "{{env_id}}"
     rule_name = "{{rule_name}}"
     description = "{{description}}"
     security_policy_id = resource.nsxt_dfw_policy_id
@@ -40,8 +47,7 @@ def run(job, resource=None, *args, **kwargs):
     source_group_refs = list({{source_groups}})
     destination_group_refs = list({{destination_groups}})
     group = resource.group
-    env = Environment.objects.get(id=env_id)
-    rh = env.resource_handler
+    rh = ResourceHandler.objects.get(id=resource.nsxt_rh_id)
     nsx = NSXTXUIAPIWrapper(rh)
     rule_id = generate_rule_id(rule_name, group)
     rule = nsx.create_or_update_distributed_firewall_rule(

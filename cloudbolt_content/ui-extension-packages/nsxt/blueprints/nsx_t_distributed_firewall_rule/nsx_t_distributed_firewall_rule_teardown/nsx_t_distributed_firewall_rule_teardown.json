@@ -1,10 +1,14 @@
 {
     "description": "",
-    "max-retries": 0,
+    "id": "OHK-zujka982",
+    "last_updated": "2023-08-03",
+    "max_retries": 0,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
     "name": "NSX-T Distributed Firewall Rule Teardown",
-    "resource-technologies": [],
-    "script-filename": "teardown_nsxt_dfw_rule.py",
-    "shared": "True",
-    "target-os-families": [],
+    "resource_technologies": [],
+    "script_filename": "teardown_nsxt_dfw_rule.py",
+    "shared": true,
+    "target_os_families": [],
     "type": "CloudBolt Plug-in"
 }

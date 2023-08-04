@@ -1,5 +1,5 @@
 """
-Teardown item for deleting an NSX-T Infrastructure Group
+Teardown item for deleting an NSX-T Firewall Rule
 """
 from infrastructure.models import Environment
 from resourcehandlers.models import ResourceHandler

@@ -1,6 +1,8 @@
 """
 Build item for creating an NSX-T Infrastructure Group
 """
+import json
+
 from c2_wrapper import create_custom_field
 from common.methods import set_progress
 from infrastructure.models import Environment
@@ -18,6 +20,11 @@ def run(job, resource=None, *args, **kwargs):
     env_id = "{{env_id}}"
     group_name = "{{group_name}}"
     description = "{{description}}"
+    # TODO: membership_criteria is not currently used, but will be in the future
+    # Use a Custom Form to capture complex inputs for membership criteria
+    # criteria = "membership_criteria"
+    # logger.debug(f'criteria: {criteria}')
+    # criteria = json.loads(criteria.replace("'", '"'))
     nsxt_group_refs = list({{nsxt_groups}})
     nsxt_segment_refs = list({{nsxt_segments}})
     set_progress(f'environment: {env_id}, group_name: {group_name}, '
