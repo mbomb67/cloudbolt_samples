@@ -9,6 +9,7 @@ from utilities.exceptions import CloudBoltException
 from utilities.logger import ThreadLogger
 
 logger = ThreadLogger(__name__)
+NETWORK_VIEW = 'default'
 
 
 def is_hostname_valid(infoblox, server, network=None):
@@ -43,7 +44,10 @@ def allocate_ip(infoblox, server, network):
     """
     response = wrapper.add_fixed_record(
         f'func:nextavailableip:{network.ipam_network.network_ref}',
-        {"name": host_fqdn}
+        {
+            "name": host_fqdn,
+            "network_view": NETWORK_VIEW,
+        }
     )
     response_json = response.json()
     ip = response_json["ipv4addr"]
