@@ -1,0 +1,42 @@
+{
+    "action_inputs": [
+        {
+            "allow_multiple": false,
+            "available_all_servers": false,
+            "description": "The contents of the ad hoc script you would like to run",
+            "field_dependency_controlling_set": [],
+            "field_dependency_dependent_set": [],
+            "global_options": [],
+            "hide_if_default_value": false,
+            "label": "Script Contents",
+            "name": "script_contents",
+            "placeholder": null,
+            "relevant_osfamilies": [],
+            "required": true,
+            "show_as_attribute": false,
+            "show_on_servers": false,
+            "type": "CODE",
+            "value_pattern_string": null
+        }
+    ],
+    "action_inputs_sequence": [
+        "script_contents"
+    ],
+    "commandline_args": null,
+    "credentials": "YOUR_CREDENTIALS",
+    "description": "An action that supports running ad hoc scripts on servers",
+    "execution_timeout": 120,
+    "id": "OHK-3cogzic1",
+    "last_updated": "2023-08-29",
+    "max_retries": 0,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Ad Hoc Script",
+    "remove_after_run": true,
+    "resource_technologies": [],
+    "run_with_sudo": false,
+    "script_filename": "Sub File for Hook of Ad Hoc Script Script.py",
+    "shared": false,
+    "target_os_families": [],
+    "type": "Remote Script"
+}
