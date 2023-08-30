@@ -1,0 +1,38 @@
+{
+    "action_input_default_values": [],
+    "action_inputs": [
+        {
+            "allow-multiple": false,
+            "available-all-servers": false,
+            "description": null,
+            "field-dependency-controlling-set": [],
+            "field-dependency-dependent-set": [],
+            "global-options": [],
+            "hide-if-default-value": false,
+            "label": "Disk",
+            "name": "disk",
+            "placeholder": null,
+            "relevant-osfamilies": [],
+            "required": true,
+            "show-as-attribute": false,
+            "show-on-servers": false,
+            "type": "STR",
+            "value-pattern-string": null
+        }
+    ],
+    "base_action_name": "Add Disk in Windows OS",
+    "dangerous": false,
+    "dialog_message": "",
+    "enabled": true,
+    "extra_classes": "fas fa-compact-disc",
+    "id": "SVA-e0wkgmww",
+    "is_synchronous": false,
+    "label": "Add Disk in Windows OS",
+    "last_updated": "2023-08-30",
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "new_tab_url": null,
+    "requires_approval": false,
+    "sequence": null,
+    "submit_button_label": ""
+}

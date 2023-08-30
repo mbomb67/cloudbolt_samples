@@ -1,0 +1,36 @@
+{
+    "action_inputs": [
+        {
+            "allow_multiple": false,
+            "available_all_servers": false,
+            "description": null,
+            "field_dependency_controlling_set": [],
+            "field_dependency_dependent_set": [],
+            "global_options": [],
+            "hide_if_default_value": false,
+            "label": "Disk",
+            "name": "disk",
+            "placeholder": null,
+            "relevant_osfamilies": [],
+            "required": true,
+            "show_as_attribute": false,
+            "show_on_servers": false,
+            "type": "STR",
+            "value_pattern_string": null
+        }
+    ],
+    "description": "Takes a disk that has already been presented to the VM and mounts it inside the guest OS.",
+    "id": "OHK-r32d9d44",
+    "last_updated": "2023-08-30",
+    "max_retries": 0,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Add Disk in Windows OS",
+    "resource_technologies": [],
+    "script_filename": "Sub File for Hook of Add Disk in Windows OS Script.py",
+    "shared": false,
+    "target_os_families": [
+        "Windows"
+    ],
+    "type": "CloudBolt Plug-in"
+}
