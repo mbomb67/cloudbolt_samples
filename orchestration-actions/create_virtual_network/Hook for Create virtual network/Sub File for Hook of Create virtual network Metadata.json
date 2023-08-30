@@ -1,0 +1,14 @@
+{
+    "description": "",
+    "id": "OHK-52yf2185",
+    "last_updated": "2023-08-30",
+    "max_retries": 0,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Create virtual network",
+    "resource_technologies": [],
+    "script_filename": "Sub File for Hook of Create virtual network Script.py",
+    "shared": false,
+    "target_os_families": [],
+    "type": "CloudBolt Plug-in"
+}

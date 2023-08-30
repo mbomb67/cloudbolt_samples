@@ -1,0 +1,15 @@
+{
+    "action_input_default_values": [],
+    "base_action_name": "Create virtual network",
+    "continue_on_failure": false,
+    "description": null,
+    "enabled": false,
+    "hook_point": "Blueprint Action",
+    "id": "HPA-inwb0zcl",
+    "last_updated": "2023-08-30",
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Create virtual network",
+    "run_on_statuses": "",
+    "run_seq": 1
+}
