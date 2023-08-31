@@ -1,0 +1,18 @@
+{
+    "action_input_default_values": [],
+    "base_action_name": "Refresh Info",
+    "dangerous": false,
+    "dialog_message": "",
+    "enabled": true,
+    "extra_classes": "fas fa-redo",
+    "id": "SVA-y93hrklz",
+    "is_synchronous": false,
+    "label": "Refresh Info",
+    "last_updated": "2023-08-31",
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "new_tab_url": null,
+    "requires_approval": false,
+    "sequence": 20,
+    "submit_button_label": ""
+}
