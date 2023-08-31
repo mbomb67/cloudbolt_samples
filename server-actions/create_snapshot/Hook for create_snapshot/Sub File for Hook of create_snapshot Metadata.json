@@ -1,0 +1,57 @@
+{
+    "action_inputs": [
+        {
+            "allow_multiple": false,
+            "available_all_servers": false,
+            "description": null,
+            "field_dependency_controlling_set": [],
+            "field_dependency_dependent_set": [],
+            "global_options": [],
+            "hide_if_default_value": false,
+            "label": "Description",
+            "name": "description",
+            "placeholder": null,
+            "relevant_osfamilies": [],
+            "required": true,
+            "show_as_attribute": false,
+            "show_on_servers": false,
+            "type": "STR",
+            "value_pattern_string": null
+        },
+        {
+            "allow_multiple": false,
+            "available_all_servers": false,
+            "description": "Name of new Snapshot",
+            "field_dependency_controlling_set": [],
+            "field_dependency_dependent_set": [],
+            "global_options": [],
+            "hide_if_default_value": false,
+            "label": "Snapshot Name",
+            "name": "snapshot_name",
+            "placeholder": null,
+            "relevant_osfamilies": [],
+            "required": true,
+            "show_as_attribute": false,
+            "show_on_servers": false,
+            "type": "STR",
+            "value_pattern_string": null
+        }
+    ],
+    "action_inputs_sequence": [
+        "snapshot_name"
+    ],
+    "description": "Server Action to create snapshot for an OpenStack Instance.",
+    "id": "OHK-owtf91ao",
+    "last_updated": "2023-08-31",
+    "max_retries": 0,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "create_snapshot",
+    "resource_technologies": [
+        "OpenStack"
+    ],
+    "script_filename": "Sub File for Hook of create_snapshot Script.py",
+    "shared": false,
+    "target_os_families": [],
+    "type": "CloudBolt Plug-in"
+}
