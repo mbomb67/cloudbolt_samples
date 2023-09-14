@@ -1,5 +1,6 @@
 """
 CloudBolt Plug-in that adds a new disk in the OS of a VM in vCenter.
+Recurring Jobs for GitHub Apps Rock!
 """
 from common.methods import set_progress
 from utilities.logger import ThreadLogger
