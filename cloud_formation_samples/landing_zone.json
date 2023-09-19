@@ -7,7 +7,22 @@
             "Properties": {
                 "AccountName": {"Ref": "AccountName"},
                 "Email": {"Ref": "Email"},
-                "ParentIds" : {"Ref": "ParentIds"}
+                "ParentIds" : [{"Ref": "ParentId"}],
+                "RoleName": {"Ref": "RoleName"},
+                "Tags": [
+                    {
+                        "Key": "CostCenter",
+                        "Value": {"Ref": "CostCenter"}
+                    },
+                    {
+                        "Key": "Owner",
+                        "Value": {"Ref": "Owner"}
+                    },
+                    {
+                        "Key": "Group",
+                        "Value": {"Ref": "Group"}
+                    }
+                ]
             }
         }
     },
@@ -20,15 +35,37 @@
             "Type": "String",
             "Description": "Email address of the account to create"
         },
-        "ParentIds": {
-            "Type": "List<AWS::Organizations::Account::Id>",
-            "Description": "List of IDs of the parent accounts to attach the new account to"
+        "ParentId": {
+            "Type": "String",
+            "Description": "ID of the root account or AWS orgs OU to attach the new account to"
+        },
+        "RoleName": {
+            "Type": "String",
+            "Description": "Name of the role to create in the new account",
+            "Default": "CloudBoltAccountAccessRole"
+        },
+        "CostCenter": {
+            "Type": "String",
+            "Description": "Cost center tag to apply to the new account"
+        },
+        "Owner": {
+            "Type": "String",
+            "Description": "Owner tag to apply to the new account"
+        },
+        "Group": {
+            "Type": "String",
+            "Description": "Group tag to apply to the new account"
         }
     },
     "Outputs": {
         "AccountId": {
             "Value": {
                 "Ref": "NewAccount"
+            }
+        },
+        "AccountArn": {
+            "Value": {
+                "Fn::GetAtt": ["NewAccount","Arn"]
             }
         }
     }
