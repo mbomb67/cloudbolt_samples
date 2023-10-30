@@ -1,0 +1,183 @@
+{
+ "title": "Migrate vRA8 Deployments for Blueprint",
+ "description": "Select the CloudBolt Blueprint that you will be tying the created Resources to.",
+ "logo": "/static/uploads/blueprints/vRA_to_CMP_njqvzM6.png",
+ "completedHtml": "<p class=\"custom-order-form-completed\">Your order is being processed.</p>",
+ "loadingHtml": "<p class=\"custom-order-form-loading\">Loading order form...</p>",
+ "pages": [
+  {
+   "name": "order_details",
+   "elements": [
+    {
+     "type": "text",
+     "name": "blueprint_id",
+     "visible": false,
+     "defaultValue": "BP-9v996l7e",
+     "readOnly": true
+    },
+    {
+     "type": "dropdown",
+     "name": "group",
+     "title": "Group",
+     "isRequired": true,
+     "choicesByUrl": {
+      "url": "/api/v3/cmp/blueprints/{blueprint_id}/",
+      "path": "_links,groupsThatCanDeploy",
+      "valueName": "href",
+      "titleName": "title"
+     }
+    }
+   ],
+   "title": "Order Details"
+  },
+  {
+   "name": "Migrate vRA8 Metadata",
+   "elements": [
+    {
+     "type": "dropdown",
+     "name": "plugin-bdi-385xkog1.vra_connection",
+     "title": "vRA Connection",
+     "description": "Select the vRA connection to pull metadata from",
+     "isRequired": true,
+     "choicesByUrl": {
+      "url": "/api/v3/cmp/parameters/CF-8mbn1lim/options/?group={group}",
+      "path": "options",
+      "allowEmptyResponse": true
+     }
+    },
+    {
+     "type": "dropdown",
+     "name": "plugin-bdi-385xkog1.vra_blueprint",
+     "title": "vRA Blueprint",
+     "description": "Select the Blueprint you would like to migrate Deployments for",
+     "isRequired": true,
+     "choicesByUrl": {
+      "url": "/api/v3/cmp/parameters/CF-pnhdr1of/options/?group={group}&inputs={\"vra_connection\": \"{plugin-bdi-385xkog1.vra_connection}\"}",
+      "path": "options",
+      "allowEmptyResponse": true
+     },
+     "placeholder": "Select"
+    },
+    {
+     "type": "tagbox",
+     "name": "plugin-bdi-385xkog1.vra_projects",
+     "title": "vRA Projects (Optional)",
+     "description": "Optional to filter the migrated deployments by project ID",
+     "choicesByUrl": {
+      "url": "/api/v3/cmp/parameters/CF-2l2685he/options/?group={group}&inputs={\"vra_connection\": \"{plugin-bdi-385xkog1.vra_connection}\"}",
+      "path": "options",
+      "allowEmptyResponse": true
+     },
+     "showSelectAllItem": true
+    }
+   ],
+   "title": "Migrate vRA8 Metadata",
+   "description": "Make your vRA8 Selections"
+  },
+  {
+   "name": "page1",
+   "elements": [
+    {
+     "type": "dropdown",
+     "name": "plugin-bdi-385xkog1.cloudbolt_blueprint",
+     "title": "Cloudbolt Blueprint",
+     "isRequired": true,
+     "choicesByUrl": {
+      "url": "/api/v3/cmp/parameters/CF-pnig3thd/options/?group={group}",
+      "path": "options",
+      "allowEmptyResponse": true
+     }
+    },
+    {
+     "type": "matrixdynamic",
+     "name": "plugin-bdi-385xkog1.deployment_map",
+     "title": "Deployment Map",
+     "description": "The Deployment resources need to be mapped to CloudBolt Tiers in the destination CloudBolt Blueprint. This is a dict mapping the vRA Deployment resource names to the CloudBolt Tier names. You will need to create an item below for each item on the vRA canvas. \n# Example: {\"Cloud_Machine_1\": \"CloudBolt Server Tier\"}",
+     "isRequired": true,
+     "columns": [
+      {
+       "name": "vra_resource_name",
+       "title": "vRA Resource",
+       "cellType": "dropdown",
+       "choicesByUrl": {
+        "url": "/api/v3/cmp/inboundWebHooks/IWH-iolsmays/run/?token=MX8tetivcTWOfwkt5KLoBIg_dYMb17IGVCHrP6VRh0w&vra_connection={plugin-bdi-385xkog1.vra_connection}&blueprint_id={plugin-bdi-385xkog1.vra_blueprint}",
+        "path": "options",
+        "allowEmptyResponse": true
+       }
+      },
+      {
+       "name": "cb_si_name",
+       "title": "CloudBolt Tier",
+       "cellType": "dropdown",
+       "choicesByUrl": {
+        "url": "/api/v3/cmp/inboundWebHooks/IWH-nv6ec0jn/run/?token=eV_4gNVwmjdDHq92e6e-K0ciV7uMpeG3jDku_L9hXC8&blueprint_id={plugin-bdi-385xkog1.cloudbolt_blueprint}",
+        "path": "options",
+        "allowEmptyResponse": true
+       }
+      }
+     ],
+     "rowCount": 1,
+     "minRowCount": 1
+    },
+    {
+     "type": "matrixdynamic",
+     "name": "plugin-bdi-385xkog1.groups_map",
+     "title": "Groups Map (Optional)",
+     "description": "Allows you to pass in a dict mapping vRA Business Group names to CloudBolt group names. This is useful if you want to use different names in CloudBolt than vRA. This would also allow several vRA Business Groups to map to the same CloudBolt group. Any deployments with Groups not included in the Groups Map will be migrated to a group with the same name as in vRA. \nExample: {\"vRA Business Group Name\": \"CloudBolt Group Name\"}",
+     "columns": [
+      {
+       "name": "vra_project",
+       "title": "vRA Project",
+       "cellType": "dropdown",
+       "isRequired": true,
+       "choicesByUrl": {
+        "url": "/api/v3/cmp/inboundWebHooks/IWH-3uv966je/run/?token=L3tWbaPnGAZFi0_l7HCxtFSxjriD6QYc3gjPKPwkZDY&vra_connection={plugin-bdi-385xkog1.vra_connection}",
+        "path": "options",
+        "valueName": "id",
+        "titleName": "name",
+        "allowEmptyResponse": true
+       }
+      },
+      {
+       "name": "cb_group",
+       "title": "CloudBolt Group",
+       "cellType": "dropdown",
+       "isRequired": true,
+       "choicesByUrl": {
+        "url": "https://cb-mb-01.cblabsales.net/api/v3/cmp/inboundWebHooks/IWH-te72s2xz/run/?token=NtlBenuB6i3CRTzEIbPmo_Zlj0VkANNFGhwK1s7GnNc",
+        "path": "options",
+        "valueName": "id",
+        "titleName": "name",
+        "allowEmptyResponse": true
+       }
+      }
+     ],
+     "rowCount": 0
+    },
+    {
+     "type": "text",
+     "name": "plugin-bdi-385xkog1.migrate_prefix",
+     "title": "Migrate Prefix"
+    },
+    {
+     "type": "matrixdynamic",
+     "name": "plugin-bdi-385xkog1.prefixes_to_ignore",
+     "title": "Prefixes To Ignore (Optional)",
+     "description": "Enter a list of Custom Property Prefixes that should be ignored when migrating custom properties to CloudBolt. Most of the vRA system properties have already been excluded. ",
+     "columns": [
+      {
+       "name": "ignored_prefixes",
+       "title": "Ignored Prefixes",
+       "cellType": "text"
+      }
+     ],
+     "rowCount": 0
+    }
+   ],
+   "title": "CloudBolt Selections",
+   "description": "Select elements related to where objects will land in CloudBolt"
+  }
+ ],
+ "showQuestionNumbers": "off",
+ "completeText": "Order"
+}
