@@ -15,6 +15,11 @@ def determine_deployment_environment_and_parameters(*args, **kwargs):
     # Use the first environment linked to the less-used cluster
     env = Environment.objects.get(id=ENVIRONMENT_ID)
     parameters = {}
-    os_build = OSBuild.objects.get(id=5)
-
-    return {"environment": env, "parameters": parameters, "os-build": os_build}
+    os_build = OSBuild.objects.get(id=OS_BUILD_ID)
+    return_params = {
+        "environment": env,
+        "parameters": parameters,
+        "os-build": os_build
+    }
+    logger.debug(f"return_params: {return_params}")
+    return return_params
