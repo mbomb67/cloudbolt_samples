@@ -102,7 +102,8 @@ def run(job, resource):
     except CalledProcessError:
         job.set_progress("Terraform destroy failed")
     try:
-        wrapper.workspace_delete(workspace_id, env=env_vars)
+        wrapper.workspace_select("default", env=env_vars)
+        wrapper._call(f"workspace delete {workspace_id}", env=env_vars)
         job.set_progress(f"Removed workspace: {workspace_id}")
     except CalledProcessError as e:
         logger.debug(f"Terraform workspace failed removal cmd: {e.cmd}, "
