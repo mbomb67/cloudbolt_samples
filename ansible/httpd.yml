@@ -1,5 +1,5 @@
 - name: Install HTTPD using Ansible Playbook
-  hosts: slave-1 #here ensure that node instance name is correct or not 
+  hosts: web_servers #here ensure that node instance name is correct or not 
   become: true
   tasks:
     - name: Install HTTPD package
