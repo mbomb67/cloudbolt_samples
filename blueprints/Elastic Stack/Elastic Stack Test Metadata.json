@@ -48,7 +48,7 @@
     "management_actions": [],
     "maximum_version_required": "",
     "minimum_version_required": "8.6",
-    "name": "Elastic Stack",
+    "name": "Elastic Stack Test",
     "resource_name_template": "Elastic Search - {{group.name}} - 00X",
     "resource_type": {
         "icon": "fas fa-search",
