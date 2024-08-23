@@ -1,0 +1,65 @@
+{
+    "any_group_can_deploy": false,
+    "auto_historical_resources": false,
+    "deployment_items": [
+        {
+            "all_environments_enabled": false,
+            "allowed_os_families": [
+                "Oracle Enterprise Linux"
+            ],
+            "applications": null,
+            "deploy_seq": 1,
+            "description": "",
+            "environment_selection_orchestration": null,
+            "execute_in_parallel": false,
+            "hostname_template": "elastic-00X",
+            "id": "BDI-wf23fkmx",
+            "name": "OEL8-Patched-July2024",
+            "os_build": {
+                "href": "/api/v3/cmp/osBuilds/OSB-8iaj3hhf/",
+                "title": "OEL8-Patched-July2024"
+            },
+            "restrict_applications": false,
+            "show_on_order_form": false,
+            "tier_type": "server"
+        },
+        {
+            "action_name": "Install Elastic Stack",
+            "continue_on_failure": false,
+            "deploy_seq": 2,
+            "description": null,
+            "enabled": true,
+            "execute_in_parallel": false,
+            "id": "BDI-7jgnuotp",
+            "name": "Install Elastic Stack",
+            "run_on_scale_up": true,
+            "show_on_order_form": false,
+            "tier_type": "script"
+        }
+    ],
+    "description": "Deploy a VM then install the Elastic Stack on the server. Software installed: Java, ElasticSearch, Logstash, Kibana",
+    "favorited": false,
+    "icon": "elasticsearch-logo.png",
+    "id": "BP-nmtx97bh",
+    "is_manageable": true,
+    "is_orderable": true,
+    "labels": [],
+    "last_updated": "2024-08-12",
+    "management_actions": [],
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Elastic Stack Test",
+    "resource_name_template": "Elastic Search - {{group.name}} - 00X",
+    "resource_type": {
+        "icon": "fas fa-search",
+        "id": "RT-9hmj5hpg",
+        "label": "Elastic Search Instance",
+        "lifecycle": "ACTIVE",
+        "list_view_columns": [],
+        "name": "elastic_search_instance",
+        "plural_label": "Elastic Search Instances"
+    },
+    "sequence": 0,
+    "show_recipient_field_on_order_form": false,
+    "teardown_items": []
+}
