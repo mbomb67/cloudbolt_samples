@@ -315,3 +315,35 @@ class VMwareConnection(object):
             return datastore
         return None
 
+    def get_vm_advanced_info_by_key(self, vc_vm, key):
+        """
+        Get the advanced info of the vCenter VM by key.
+        :param vc_vm: vCenter VM object
+        :param key: Key of the advanced info. eg. guestinfo.appInfo
+        :return: Advanced info object
+        """
+        for item in self.get_vm_advanced_info(vc_vm):
+            if item.key == key:
+                return item.value
+
+    def get_vm_advanced_info(self, vc_vm):
+        """
+        Get the advanced info of the vCenter VM.
+        :param vc_vm: vCenter VM object
+        :return: Advanced info object
+        """
+        return vc_vm.config.extraConfig
+
+    def set_vm_advanced_info(self, vc_vm, key, value):
+        """
+        Set the advanced info of the vCenter VM.
+        :param vc_vm: vCenter VM object
+        :param key: Key of the advanced info. eg. guestinfo.myNewKey
+        :param value: Value of the advanced info
+        :return: None
+        """
+        extra_config = vc_vm.config.extraConfig
+        extra_config.append(vim.option.OptionValue(key=key, value=value))
+        spec = vim.vm.ConfigSpec(extraConfig=extra_config)
+        task = vc_vm.ReconfigVM_Task(spec=spec)
+        tasks.wait_for_tasks(self.service_instance, [task])
