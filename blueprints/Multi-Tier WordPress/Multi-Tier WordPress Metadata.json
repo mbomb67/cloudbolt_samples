@@ -1,0 +1,245 @@
+{
+    "any_group_can_deploy": false,
+    "auto_historical_resources": false,
+    "deployment_items": [
+        {
+            "all_environments_enabled": false,
+            "allowed_os_families": [
+                "Amazon Linux",
+                "CentOS",
+                "Red Hat"
+            ],
+            "applications": null,
+            "deploy_seq": 1,
+            "description": "",
+            "environment_selection_orchestration": null,
+            "execute_in_parallel": true,
+            "hostname_template": "wp-web-00X",
+            "id": "BDI-tofsrvvz",
+            "name": "Web",
+            "os_build": {
+                "href": "/api/v3/cmp/osBuilds/OSB-xt585kfb/",
+                "title": "Amazon Linux 2023"
+            },
+            "restrict_applications": false,
+            "show_on_order_form": true,
+            "tier_type": "server"
+        },
+        {
+            "all_environments_enabled": false,
+            "allowed_os_families": [
+                "Amazon Linux",
+                "CentOS",
+                "Red Hat"
+            ],
+            "applications": null,
+            "deploy_seq": 2,
+            "description": "",
+            "environment_selection_orchestration": null,
+            "execute_in_parallel": false,
+            "hostname_template": "wp-db-00X",
+            "id": "BDI-wcvpkv7s",
+            "name": "DB",
+            "os_build": {
+                "href": "/api/v3/cmp/osBuilds/OSB-xt585kfb/",
+                "title": "Amazon Linux 2023"
+            },
+            "restrict_applications": false,
+            "show_on_order_form": true,
+            "tier_type": "server"
+        },
+        {
+            "action_name": "Install MySQL",
+            "continue_on_failure": false,
+            "deploy_seq": 3,
+            "description": "",
+            "enabled": true,
+            "execute_in_parallel": false,
+            "id": "BDI-9if5akup",
+            "name": "Install MySQL",
+            "run_on_scale_up": true,
+            "server_tiers": [
+                "DB"
+            ],
+            "show_on_order_form": false,
+            "tier_type": "script"
+        },
+        {
+            "action_name": "Install WordPress Prereqs",
+            "continue_on_failure": true,
+            "deploy_seq": 4,
+            "description": "",
+            "enabled": true,
+            "execute_in_parallel": false,
+            "id": "BDI-aaz302nn",
+            "name": "Install WordPress prereqs",
+            "run_on_scale_up": true,
+            "server_tiers": [
+                "Web"
+            ],
+            "show_on_order_form": false,
+            "tier_type": "script"
+        },
+        {
+            "action_name": "Install WordPress",
+            "continue_on_failure": true,
+            "deploy_seq": 5,
+            "description": "",
+            "enabled": true,
+            "execute_in_parallel": false,
+            "id": "BDI-w2esluz7",
+            "name": "Install WordPress",
+            "run_on_scale_up": true,
+            "server_tiers": [
+                "Web"
+            ],
+            "show_on_order_form": false,
+            "tier_type": "script"
+        }
+    ],
+    "description": "<p>\r\nDeploys MySQL, PHP, and Apache across two VMs (Web and Database tiers). When complete, the WordPress installation wizard is available by directing your browser to the IP of the VM.\r\n</p>\r\n<p>\r\nThis BP is an example of how you can use blueprint-level parameters to pass inputs to multiple different remote scripts.\r\n</p>\r\n<p>\r\nThis BP has been verified on CentOS 7.x, but should also work on RedHat 7.x, and could be adapted to work on Ubuntu and other Linux distros.\r\n</p>",
+    "favorited": true,
+    "icon": "wp.png",
+    "id": "BP-fyutywi2",
+    "is_manageable": true,
+    "is_orderable": true,
+    "labels": [],
+    "last_updated": "2024-10-23",
+    "management_actions": [],
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Multi-Tier WordPress",
+    "parameters": [
+        {
+            "allow_multiple": false,
+            "available_all_servers": false,
+            "constraints": "Unconstrained",
+            "description": "",
+            "destination": "Build Items",
+            "field_dependency_controlling_set": [],
+            "field_dependency_dependent_set": [],
+            "global_options": [],
+            "id": "CF-wglw43wj",
+            "label": "Database Name",
+            "name": "database_name",
+            "options": [
+                "wordpress"
+            ],
+            "placeholder": null,
+            "relevant_osfamilies": [],
+            "required": true,
+            "show_as_attribute": false,
+            "show_on_servers": false,
+            "type": "STR",
+            "value_pattern_string": null
+        },
+        {
+            "allow_multiple": false,
+            "available_all_servers": false,
+            "constraints": "Unconstrained",
+            "description": "",
+            "destination": "Build Items",
+            "field_dependency_controlling_set": [],
+            "field_dependency_dependent_set": [],
+            "global_options": [],
+            "id": "CF-81h44vbt",
+            "label": "Database Password",
+            "name": "database_password",
+            "options": [],
+            "placeholder": null,
+            "relevant_osfamilies": [],
+            "required": true,
+            "show_as_attribute": false,
+            "show_on_servers": false,
+            "type": "PWD",
+            "value_pattern_string": null
+        },
+        {
+            "allow_multiple": false,
+            "available_all_servers": false,
+            "constraints": "Unconstrained",
+            "description": "",
+            "destination": "Build Items",
+            "field_dependency_controlling_set": [],
+            "field_dependency_dependent_set": [],
+            "global_options": [],
+            "id": "CF-caqdtw3s",
+            "label": "Database Username",
+            "name": "database_username",
+            "options": [
+                "wordpress"
+            ],
+            "placeholder": null,
+            "relevant_osfamilies": [],
+            "required": true,
+            "show_as_attribute": false,
+            "show_on_servers": false,
+            "type": "STR",
+            "value_pattern_string": null
+        },
+        {
+            "allow_multiple": false,
+            "available_all_servers": true,
+            "constraints": {
+                "maximum": "7.00",
+                "minimum": "1.00"
+            },
+            "description": null,
+            "destination": "Build Items",
+            "field_dependency_controlling_set": [],
+            "field_dependency_dependent_set": [],
+            "gen_options_hooks": [
+                {
+                    "enabled": true,
+                    "name": "Generate options for 'Expiration Date'"
+                }
+            ],
+            "global_options": [],
+            "id": "CF-v3u9t7xw",
+            "label": "Expiration Date",
+            "name": "expiration_date",
+            "options": [],
+            "placeholder": null,
+            "relevant_osfamilies": [],
+            "required": false,
+            "show_as_attribute": false,
+            "show_on_servers": true,
+            "type": "DT",
+            "value_pattern_string": null
+        },
+        {
+            "allow_multiple": false,
+            "available_all_servers": false,
+            "constraints": "Unconstrained",
+            "description": "Used to set the power control schedule for a server at order time. Not visible on the server after provisioning, because it is transformed into a power schedule during provisioning.",
+            "destination": "Build Items",
+            "field_dependency_controlling_set": [],
+            "field_dependency_dependent_set": [],
+            "global_options": [],
+            "id": "CF-5kr9uk5n",
+            "label": "Power Schedule",
+            "name": "power_schedule",
+            "options": [],
+            "placeholder": null,
+            "relevant_osfamilies": [],
+            "required": false,
+            "show_as_attribute": false,
+            "show_on_servers": false,
+            "type": "STR",
+            "value_pattern_string": null
+        }
+    ],
+    "resource_name_template": null,
+    "resource_type": {
+        "icon": "fab fa-wordpress",
+        "id": "RT-m9z00s0o",
+        "label": "WordPress",
+        "lifecycle": "ACTIVE",
+        "list_view_columns": [],
+        "name": "wordpress",
+        "plural_label": "WordPress"
+    },
+    "sequence": 0,
+    "show_recipient_field_on_order_form": false,
+    "teardown_items": []
+}

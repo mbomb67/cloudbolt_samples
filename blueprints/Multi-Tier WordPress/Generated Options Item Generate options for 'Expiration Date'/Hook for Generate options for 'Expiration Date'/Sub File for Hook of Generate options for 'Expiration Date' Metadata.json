@@ -1,0 +1,14 @@
+{
+    "description": null,
+    "id": "OHK-ju50kz16",
+    "last_updated": "2024-10-23",
+    "max_retries": 0,
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Generate options for 'Expiration Date'",
+    "resource_technologies": [],
+    "script_filename": "Sub File for Hook of Generate options for 'Expiration Date' Script.py",
+    "shared": false,
+    "target_os_families": [],
+    "type": "CloudBolt Plug-in"
+}
