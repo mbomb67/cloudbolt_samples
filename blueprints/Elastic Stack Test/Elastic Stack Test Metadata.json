@@ -37,7 +37,7 @@
             "tier_type": "script"
         }
     ],
-    "description": "Deploy a VM then install the Elastic Stack on the server. Software installed: Java, ElasticSearch, Logstash, Kibana.",
+    "description": "Deploy a VM then install the Elastic Stack on the server. Software installed: Java, ElasticSearch, Logstash, Kibana. Comment",
     "favorited": false,
     "icon": "elasticsearch-logo_Sc0ZdKD.png",
     "id": "BP-nmtx97bh",
