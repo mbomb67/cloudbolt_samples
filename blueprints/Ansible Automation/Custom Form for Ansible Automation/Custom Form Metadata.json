@@ -1,0 +1,9 @@
+{
+    "created": "2023-07-26 15:47:19.328201",
+    "id": "FRM-54bfu4p5",
+    "json": "{\"title\": \"Ansible Automation\", \"logo\": \"/static/uploads/blueprints/AnsibleAutomation.png\", \"completedHtml\": \"<p class=\\\"custom-order-form-completed\\\">Your order is being processed.</p>\", \"loadingHtml\": \"<p class=\\\"custom-order-form-loading\\\">Loading order form...</p>\", \"pages\": [{\"name\": \"order_details\", \"elements\": [{\"type\": \"text\", \"name\": \"blueprint_id\", \"visible\": false, \"defaultValue\": \"BP-1ecdtclq\", \"readOnly\": true}, {\"type\": \"dropdown\", \"name\": \"group\", \"title\": \"Group\", \"isRequired\": true, \"choicesByUrl\": {\"url\": \"/api/v3/cmp/blueprints/{blueprint_id}/\", \"path\": \"_links,groupsThatCanDeploy\", \"valueName\": \"href\", \"titleName\": \"title\"}}], \"title\": \"Order Details\"}, {\"name\": \"Ansible Automation Run Job Template\", \"elements\": [{\"type\": \"paneldynamic\", \"name\": \"plugin-bdi-zph9vfyz.extra_vars\", \"title\": \"Questions?\", \"isRequired\": true, \"templateElements\": [{\"type\": \"text\", \"name\": \"extravar1\", \"title\": \"What state are you from?\"}, {\"type\": \"text\", \"name\": \"extravar2\", \"title\": \"What is your favorite Color?\"}, {\"type\": \"text\", \"name\": \"extravar3\", \"title\": \"What color is the sky?\"}], \"panelCount\": 1, \"minPanelCount\": 1, \"maxPanelCount\": 1}], \"title\": \"Ansible Automation Run Job Template\"}], \"showQuestionNumbers\": \"off\", \"completeText\": \"Order\"}",
+    "last_updated": "2025-02-05",
+    "modified": "2023-07-26 15:47:19.578647",
+    "rendering_mode": "vue",
+    "supported_languages": ""
+}
