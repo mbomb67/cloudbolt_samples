@@ -1,0 +1,36 @@
+{
+    "any_group_can_deploy": false,
+    "auto_historical_resources": false,
+    "deployment_items": [
+        {
+            "action_name": "Update Parameter Values for Group Servers",
+            "continue_on_failure": false,
+            "deploy_seq": 1,
+            "description": null,
+            "enabled": true,
+            "execute_in_parallel": false,
+            "id": "BDI-9s1utfu1",
+            "name": "Update Parameter Values for Group Servers",
+            "rate": null,
+            "run_on_scale_up": true,
+            "show_on_order_form": false,
+            "tier_type": "plugin"
+        }
+    ],
+    "description": "A Maintenance Plugin to be used by CloudBolt Administrators. This allows you to update a value for all Servers belonging to a single Group in CloudBolt",
+    "favorited": false,
+    "icon": "server_N5M6bra.png",
+    "id": "BP-evjwjip3",
+    "is_manageable": true,
+    "is_orderable": true,
+    "labels": [],
+    "last_updated": "2025-02-20",
+    "management_actions": [],
+    "maximum_version_required": "",
+    "minimum_version_required": "8.6",
+    "name": "Update Parameter Values for Group Servers",
+    "resource_name_template": null,
+    "sequence": 0,
+    "show_recipient_field_on_order_form": false,
+    "teardown_items": []
+}
