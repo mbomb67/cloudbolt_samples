@@ -17,14 +17,14 @@
             "tier_type": "plugin"
         }
     ],
-    "description": "A Maintenance Plugin to be used by CloudBolt Administrators. This allows you to update a value for all Servers belonging to a single Group in CloudBolt",
+    "description": "A Maintenance Plugin to be used by CloudBolt Administrators. This allows you to update a value for all Servers belonging to a single Group in CloudBolt.",
     "favorited": false,
     "icon": "server_N5M6bra.png",
     "id": "BP-evjwjip3",
     "is_manageable": true,
     "is_orderable": true,
     "labels": [],
-    "last_updated": "2025-02-20",
+    "last_updated": "2025-02-21",
     "management_actions": [],
     "maximum_version_required": "",
     "minimum_version_required": "8.6",
