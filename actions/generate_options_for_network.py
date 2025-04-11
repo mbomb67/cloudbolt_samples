@@ -13,4 +13,3 @@ def get_options_list(field, control_value=None, control_value_dict=None,
         return options
     env = Environment.objects.get(id=control_value)
     return [(n.id, n.name)for n in env.networks()]
-
