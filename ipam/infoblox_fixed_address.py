@@ -3,6 +3,7 @@
 Provided in this module are the 6 signature methods that define interactions with Infoblox.
 """
 import time
+import json
 
 from infrastructure.models import Server
 from utilities.exceptions import CloudBoltException
@@ -61,7 +62,28 @@ def setup_dhcp_for_host(infoblox, hostname, mac_address):
     Code defined here will be executed at the Pre-Network Configuration trigger point.
     """
     wrapper = infoblox.get_api_wrapper()
-    wrapper.setup_dhcp_for_host(hostname, mac_address)
+    wrapper.BASE_URL = f'https://{wrapper.BASE_URL.split("/")[2]}/wapi/v2.0/'
+    # At this point, the server should be in the PROV state.
+    server = Server.objects.get(hostname=hostname, status="PROV")
+    ip_address = server.sc_nic_0_ip
+    host_record = wrapper.get_host_by_ip(ip_address)
+
+    # Delete the original record - InfoBlox does not allow updating a fixed addr
+    if host_record:
+        ref = host_record[0]["_ref"]
+        wrapper.delete_fixed_address(ref)
+
+    #Add a fixed record with the correct MAC address
+    response = wrapper.add_fixed_record(
+        host_record[0]["ip_address"],
+        {
+            "name": host_record[0]["names"][0],
+            "network_view": host_record[0]["network_view"],
+            "network": host_record[0]["network"],
+            "mac": mac_address,
+        }
+    )
+    return response
 
 
 def restart_dhcp_service(infoblox):
