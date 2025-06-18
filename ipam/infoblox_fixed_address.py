@@ -5,7 +5,7 @@ Provided in this module are the 6 signature methods that define interactions wit
 import time
 import json
 
-from infrastructure.models import Server
+from infrastructure.models import Server, ServerNetworkCard
 from utilities.exceptions import CloudBoltException
 from utilities.logger import ThreadLogger
 
@@ -64,8 +64,10 @@ def setup_dhcp_for_host(infoblox, hostname, mac_address):
     wrapper = infoblox.get_api_wrapper()
     wrapper.BASE_URL = f'https://{wrapper.BASE_URL.split("/")[2]}/wapi/v2.0/'
     # At this point, the server should be in the PROV state.
-    server = Server.objects.get(hostname=hostname, status="PROV")
-    ip_address = server.sc_nic_0_ip
+    nic = ServerNetworkCard.objects.get(mac=mac_address)
+    server = nic.server
+    index = nic.index
+    ip_address = server.get_value_for_custom_field(f'sc_nic_{index}_ip')
     host_record = wrapper.get_host_by_ip(ip_address)
 
     # Delete the original record - InfoBlox does not allow updating a fixed addr
