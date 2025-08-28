@@ -1,0 +1,16 @@
+{
+    "action_input_default_values": [],
+    "allow_parallel_jobs": false,
+    "create_date": "2022-01-26 08:03:50.527947",
+    "dependencies": {
+        "hook": "plugins/OHK-9cns5s82"
+    },
+    "description": "",
+    "enabled": false,
+    "id": "RJB-9kjdaf2c",
+    "last_run": null,
+    "last_updated": null,
+    "name": "Query Servers Per OS",
+    "schedule": "",
+    "type": "orchestration_hook"
+}

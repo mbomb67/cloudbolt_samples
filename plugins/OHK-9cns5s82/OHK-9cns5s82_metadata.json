@@ -1,0 +1,11 @@
+{
+    "description": "",
+    "id": "OHK-9cns5s82",
+    "max_retries": 0,
+    "name": "Query Servers Per OS",
+    "resource_technologies": [],
+    "script_filename": "OHK-9cns5s82_script.py",
+    "shared": false,
+    "target_os_families": [],
+    "type": "CloudBolt Plug-in"
+}
