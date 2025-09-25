@@ -35,11 +35,20 @@ class AzurePolicyConnection(object):
         subscription_id = self.rh.cast().serviceaccount
         return f"/subscriptions/{subscription_id}"
 
+    def get_management_group_scope(self, management_group_id):
+        """
+        Get the scope string for a management group.
+        """
+        scope = (f"/providers/Microsoft.Management/managementGroups/"
+                 f"{management_group_id}")
+        return scope
+
     @staticmethod
     def get_value_for_policy_assignment_param(assignment_params, param_key):
         return assignment_params[param_key].value
 
-    def get_policy_assignment_params(self, policy_assignment_id):
+    def get_policy_assignment_params(self, policy_assignment_id,
+                                     management_group_id=None):
         """
         Retrieve the parameters of a specific policy assignment.
         Returns the parameters of the policy assignment.
@@ -48,9 +57,14 @@ class AzurePolicyConnection(object):
         if "/" in policy_assignment_id:
             policy_assignment_id = policy_assignment_id.split("/")[-1]
 
+        if management_group_id:
+            scope = self.get_management_group_scope(management_group_id)
+        else:
+            scope = self.get_subscription_scope()
+
         try:
             policy_assignment = self.client.policy_assignments.get(
-                scope=self.get_subscription_scope(),
+                scope=scope,
                 policy_assignment_name=policy_assignment_id
             )
             return policy_assignment.parameters
