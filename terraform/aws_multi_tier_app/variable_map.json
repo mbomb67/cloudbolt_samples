@@ -1,0 +1,16 @@
+{
+    "TF_VAR_app_name": "{{app_name}}",
+    "TF_VAR_env_name": "{{env_name}}",
+    "TF_VAR_aws_region": "{{aws_region}}",
+    "TF_VAR_vpc_cidr": "{{vpc_cidr}}",
+    "TF_VAR_owner": "{{bia.boi.order.owner.full_name}}",
+    "TF_VAR_group": "{{group.name}}",
+    "TF_VAR_cost_center": "{{cost_center}}",
+    "TF_VAR_db_username": "{{db_username}}",
+    "TF_VAR_db_password": "{{db_password}}",
+    "TF_VAR_db_instance_class": "{{db_instance_class}}",
+    "TF_VAR_db_engine": "{{db_engine}}",
+    "TF_VAR_db_allocated_storage": "{{db_allocated_storage}}",
+    "TF_VAR_template_image_id": "{{template_image_id}}",
+    "TF_VAR_template_instance_type": "{{template_instance_type}}"
+}
