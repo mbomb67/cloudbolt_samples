@@ -58,7 +58,7 @@ def patch_openstack_auth():
         if self.project_id:
             data["auth"]["scope"] = {"project": {"id": self.cast().project_id}}
         # Adjust BASE_URL for common HTTPS ports
-        if self.port == 443 or self.port == 8443:
+        if self.port == 443 or self.port == 8443 or self.port == "443" or self.port == "8443":
             BASE_URL = f"{BASE_URL}/keystone"
         url = f"{BASE_URL}/v3/auth/tokens"
         r = requests.post(url, json=data, verify=self.enable_ssl_verification)
@@ -91,14 +91,19 @@ def patch_openstack_auth():
 
         Also initializes a keystone connection that is required to list projects/tenants.
 
-        This patch is to fix an issue for Platform9 where the auth url isn't
-        located at the traditional port 5000, but rather at the standard
-        HTTPS port 443, but with a /keystone suffix.
-        5000 is still used for other OpenStack deployments.
+        This patch is to fix issues for Platform9:
+        - Auth url isn't located at the traditional port 5000, but rather at the
+            standard HTTPS port 443, but with a /keystone suffix. 5000 is still
+            used for other OpenStack deployments.
+        - Support for region_name if provided. Useful in multi-region
+            deployments.
+
+        TODO: Refactor other methods to take region_name into account as needed.
+            Images, Networks, etc. may be region-specific.
         """
         self.ssl_verification = ssl_verification
         auth_url = "{}://{}:{}".format(protocol, ip, port)
-        if port == 443 or port == 8443:
+        if port == 443 or port == 8443 or self.port == "443" or self.port == "8443":
             auth_url = f"{auth_url}/keystone"
         tenant = kwargs.pop("location_name", None)
         self.domain = kwargs.pop("domain", None)
@@ -180,11 +185,21 @@ def patch_openstack_auth():
             # this connection (and the tenant specific one below)
             # no longer specifies identity_interface="internal"
             # because not all openstack deployments register an "internal" endpoint for keystone
-            self.connection = connection.Connection(
-                session=sess, compute_api_version="2"
-            )
-            self.nova = N(compute_version, session=sess)
-            self.cinder = C(compute_version, session=sess)
+
+            # Adding support for Region name if provided
+            connection_args = {
+                'session': sess,
+                'compute_api_version': "2"
+            }
+            # Very bad - very temporary - hardcoded region name
+            region_name = "Infra"
+            if region_name:
+                connection_args['region_name'] = region_name
+            self.connection = connection.Connection(**connection_args)
+            self.nova = N(compute_version, session=sess,
+                          region_name=region_name)
+            self.cinder = C(compute_version, session=sess,
+                            region_name=region_name)
 
             if tenant:
                 # should instantiate the nova client for the correct project instead of the default
@@ -250,7 +265,7 @@ def patch_openstack_auth():
         """
         rh = self.resource_handler
         BASE_URL = f"{rh.protocol}://{rh.ip}:{rh.port}"
-        if rh.port == 443 or rh.port == 8443:
+        if rh.port == 443 or rh.port == 8443 or self.port == "443" or self.port == "8443":
             BASE_URL = f"{BASE_URL}/keystone"
         url = f"{BASE_URL}/v3/auth/tokens"
         payload = {
@@ -582,6 +597,74 @@ def patch_openstack_error_response():
 
         return power_status, ts, None
 
+    def convert_server_to_dict(self, server, location_name):
+        """
+        Extends libcloud handler convert_node_to_dict to return OpenStack-specific info
+        like size name for node_size and nics data
+        """
+        vm_dict = {
+            "hostname": server.name,
+            "uuid": server.id,
+            "location": location_name,
+        }
+
+        vm_dict["power_status"], _, _ = self.get_server_power_and_task_state(
+            server)
+        vm_dict["tags"] = []
+        vm_dict["metadata"] = server.metadata
+
+        flavor_id = server.flavor["id"]
+
+        from novaclient.exceptions import NotFound
+
+        if flavor_id:
+            try:
+                vm_dict["node_size"] = self.nova.flavors.get(flavor_id).name
+            except NotFound as e:
+                logger.exception(e)
+                vm_dict["node_size"] = None
+
+        # add nics information
+        vm_dict["nics"] = []
+
+        # TODO: check if the nics are always returned in order
+        index = 1
+        for k, v in list(server.addresses.items()):
+            # The key is the backend network, the value is a list of addresses: fixed and/or
+            # floating, if applicable
+
+            for ip_dict in v:
+                cloudbolt_nic_dict = {"index": index}
+                cloudbolt_nic_dict["network"] = k
+                private_ip = None
+                ip = None
+                mac = ip_dict.get("OS-EXT-IPS-MAC:mac_addr")
+                ip_type = ip_dict.get("OS-EXT-IPS:type")
+                address = ip_dict.get("addr")
+                if ip_type == "fixed":
+                    private_ip = address
+                elif ip_type == "floating":
+                    ip = address
+                cloudbolt_nic_dict["mac"] = mac
+                if not ip:
+                    ip = private_ip
+                cloudbolt_nic_dict["ip_address"] = ip
+                cloudbolt_nic_dict["private_ip"] = private_ip
+
+                vm_dict["nics"].append(cloudbolt_nic_dict)
+                index += 1
+
+        vm_dict["availability_zone"] = getattr(server,
+                                               "OS-EXT-AZ:availability_zone")
+
+        disks_list, total_disk_size = self._get_disks_for_server(
+            server, vm_dict["node_size"]
+        )
+        vm_dict["disks"] = disks_list
+        vm_dict["total_disk_size"] = total_disk_size
+
+        return vm_dict
+
     def is_task_complete(self, svr_id, task_id):
         """
         Contacts OpenStack to see if the task (ex. creating a VM from image) is
@@ -608,4 +691,6 @@ def patch_openstack_error_response():
             return True, 100
 
     TechnologyWrapper.get_server_power_and_task_state = get_server_power_and_task_state
+    TechnologyWrapper.convert_server_to_dict = convert_server_to_dict
     OpenStackHandler.is_task_complete = is_task_complete
+
