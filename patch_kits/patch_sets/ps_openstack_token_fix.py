@@ -192,7 +192,8 @@ def patch_openstack_auth():
             # Adding support for Region name if provided
             connection_args = {
                 'session': sess,
-                'compute_api_version': "2"
+                'compute_api_version': "2",
+                'region_name':region_name,
             }
             if region_name:
                 connection_args['region_name'] = region_name
@@ -219,7 +220,8 @@ def patch_openstack_auth():
                 )
                 sess = session.Session(auth=auth, verify=self.ssl_verification)
                 self.connection = connection.Connection(
-                    session=sess, compute_api_version="2"
+                    session=sess, compute_api_version="2",
+                    region_name=region_name
                 )
 
                 # Override self.nova to use the tenant-specific one by default. (This used to be tenant_specific_nova
