@@ -12,6 +12,7 @@ import requests
 import base64
 from common.methods import get_proxies
 from resourcehandlers.openstack.models import OpenStackImage
+from resourcehandlers.libcloudhandler.models import LibcloudHandler
 from resourcehandlers.openstack.models import OpenStackHandler
 from resourcehandlers.openstack.openstack_wrapper import TechnologyWrapper
 from resourcehandlers.openstack.data_collector import OpenStackDataCollector
@@ -694,3 +695,24 @@ def patch_openstack_error_response():
     TechnologyWrapper.convert_server_to_dict = convert_server_to_dict
     OpenStackHandler.is_task_complete = is_task_complete
 
+
+def patch_libcloud_images_templates():
+    """
+    Patches libcloud OpenStack driver methods to use keystone session
+    for authentication instead of direct token usage.
+    """
+
+    def get_all_templates(self):
+        # The images appear to be global, so we will connect to an arbitrary
+        # location to import the images
+        wrapper = self.get_api_wrapper()
+        return wrapper.get_all_templates()
+
+    def get_all_networks(self):
+        # The networks appear to be global, so we will connect to an arbitrary
+        # location to import the networks
+        wrapper = self.get_api_wrapper()
+        return wrapper.get_all_networks()
+
+    OpenStackHandler.get_all_templates = get_all_templates
+    OpenStackHandler.get_all_networks = get_all_networks
