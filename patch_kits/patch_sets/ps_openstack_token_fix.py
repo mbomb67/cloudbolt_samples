@@ -193,7 +193,7 @@ def patch_openstack_auth():
                 'compute_api_version': "2"
             }
             # Very bad - very temporary - hardcoded region name
-            region_name = "Infra"
+            region_name = "labs"
             if region_name:
                 connection_args['region_name'] = region_name
             self.connection = connection.Connection(**connection_args)
