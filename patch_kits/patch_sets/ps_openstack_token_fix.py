@@ -150,6 +150,8 @@ def patch_openstack_auth():
         project_id = kwargs.pop("project_id", None)
         auth_policy = kwargs.pop("auth_policy", None)
         self.identity_version = "2"
+        # Very bad - very temporary - hardcoded region name
+        region_name = "Infra"
         if "A3" in auth_policy:
             auth = v3.Password(
                 auth_url="{}/v3".format(auth_url),
@@ -192,8 +194,6 @@ def patch_openstack_auth():
                 'session': sess,
                 'compute_api_version': "2"
             }
-            # Very bad - very temporary - hardcoded region name
-            region_name = "labs"
             if region_name:
                 connection_args['region_name'] = region_name
             self.connection = connection.Connection(**connection_args)
@@ -225,7 +225,7 @@ def patch_openstack_auth():
                 # Override self.nova to use the tenant-specific one by default. (This used to be tenant_specific_nova
                 # but that was not being used.)
                 self.nova = N(compute_version, session=sess,
-                              project_id=project_id)
+                              project_id=project_id, region_name=region_name)
                 logger.info(
                     f"Connected to nova with a tenant-specific session with tenant '{tenant}'."
                 )
@@ -245,6 +245,7 @@ def patch_openstack_auth():
                 project_id=tenant,
                 auth_url=auth_url,
                 insecure=True,
+                region_name=region_name,
             )
             self.cinder = C(
                 2,
@@ -253,6 +254,7 @@ def patch_openstack_auth():
                 project_id=tenant,
                 auth_url=auth_url,
                 insecure=True,
+                region_name=region_name,
             )
 
         return driver
