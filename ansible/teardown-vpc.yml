@@ -1,0 +1,33 @@
+- name: Teardown VPC and dependent resources
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Delete public route table
+      amazon.aws.ec2_vpc_route_table:
+        region: "{{ aws_region }}"
+        vpc_id: "{{ vpc_id }}"
+        route_table_id: "{{ public_route_table_id }}"
+        lookup: id
+        state: absent
+
+    - name: Delete internet gateway
+      amazon.aws.ec2_vpc_igw:
+        region: "{{ aws_region }}"
+        vpc_id: "{{ vpc_id }}"
+        state: absent
+
+    - name: Delete subnets
+      amazon.aws.ec2_vpc_subnet:
+        region: "{{ aws_region }}"
+        vpc_id: "{{ vpc_id }}"
+        cidr: "{{ item }}"
+        state: absent
+      loop: "{{ public_subnet_ids + private_subnet_ids + database_subnet_ids }}"
+      # Note: ec2_vpc_subnet identifies subnets by CIDR, not ID — see caveat below
+
+    - name: Delete VPC
+      amazon.aws.ec2_vpc_net:
+        vpc_id: "{{ vpc_id }}"
+        region: "{{ aws_region }}"
+        state: absent
