@@ -26,8 +26,8 @@ def run(job, **kwargs):
 
     result = "SUCCESS"
     if config_mgr and applicable_aap_apps:
-        result, aap_job_ids = config_mgr.apply_configurations_in_aap(
-            server, applicable_aap_apps, job
+        result, aap_job_ids = apply_configurations_in_aap(
+            config_mgr, server, applicable_aap_apps, job
         )
         if result == "SUCCESS" and aap_job_ids:
             return config_mgr.wait_for_completion_in_aap(job, aap_job_ids)
