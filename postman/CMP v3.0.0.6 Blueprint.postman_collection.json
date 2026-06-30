@@ -1,0 +1,793 @@
+{
+	"info": {
+		"_postman_id": "46ffb6cb-e439-460d-9906-8513d47fcb92",
+		"name": "CMP v3.0.0.6 Blueprint",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14298677"
+	},
+	"item": [
+		{
+			"name": "Service Items",
+			"item": [
+				{
+					"name": "Get Enabled Environments For Group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/{{baseApiPath}}/blueprints/{{blueprintId}}/tierItems/BDI-kl9sij9z/enabledEnvironments?groupId={{groupId}}&fields=name,id",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{baseApiPath}}",
+								"blueprints",
+								"{{blueprintId}}",
+								"tierItems",
+								"BDI-kl9sij9z",
+								"enabledEnvironments"
+							],
+							"query": [
+								{
+									"key": "groupId",
+									"value": "{{groupId}}"
+								},
+								{
+									"key": "fields",
+									"value": "name,id"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Remote Source",
+			"item": [
+				{
+					"name": "Create From Remote Source",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.response.json();",
+									"if(!data.errors) {",
+									"    pm.environment.set(\"blueprintId\", data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"remoteSourceUrl\": \"https://raw.githubusercontent.com/CloudBoltSoftware/remote_source_blueprint_testing/main/remote_blueprint_test/remote_blueprint_test.json\"\n}"
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/{{baseApiPath}}/blueprints/createFromRemoteSource/",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{baseApiPath}}",
+								"blueprints",
+								"createFromRemoteSource",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh From Remote Source",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/{{baseApiPath}}/blueprints/{{blueprintId}}/refreshFromRemoteSource/",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"{{baseApiPath}}",
+								"blueprints",
+								"{{blueprintId}}",
+								"refreshFromRemoteSource",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "List Blueprints",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.response.json();",
+							"pm.environment.set(\"blueprintId\", data._embedded.blueprints[0].id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{host}}:{{port}}/{{baseApiPath}}/blueprints/?filter=name:MY AWS",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"{{baseApiPath}}",
+						"blueprints",
+						""
+					],
+					"query": [
+						{
+							"key": "filter",
+							"value": "name:MY AWS"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Blueprint",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{scheme}}://{{host}}:{{port}}/{{baseApiPath}}/blueprints/{{blueprintId}}/",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"{{baseApiPath}}",
+						"blueprints",
+						"{{blueprintId}}",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Export Blueprint",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"instanceSpecificInfo\": false\n}"
+				},
+				"url": {
+					"raw": "{{scheme}}://{{host}}:{{port}}/{{baseApiPath}}/blueprints/{{blueprintId}}/export/",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"{{baseApiPath}}",
+						"blueprints",
+						"{{blueprintId}}",
+						"export",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Import Blueprint",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "zipFile",
+							"type": "file",
+							"src": []
+						},
+						{
+							"key": "replaceExisting",
+							"value": "false",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{scheme}}://{{host}}:{{port}}/{{baseApiPath}}/blueprints/",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"{{baseApiPath}}",
+						"blueprints",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deployment Schema",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"group\": \"/api/v3/cmp/groups/GRP-gm1odwi1/\"\n}"
+				},
+				"url": {
+					"raw": "{{scheme}}://{{host}}:{{port}}/{{baseApiPath}}/blueprints/{{blueprintId}}/deploymentSchema/",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"{{baseApiPath}}",
+						"blueprints",
+						"{{blueprintId}}",
+						"deploymentSchema",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Deployment Schema",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"group\": \"/api/v3/cmp/groups/GRP-gm1odwi1/\"\n}"
+				},
+				"url": {
+					"raw": "{{scheme}}://{{host}}:{{port}}/{{baseApiPath}}/blueprints/{{blueprintId}}/deploymentSchema/",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"{{baseApiPath}}",
+						"blueprints",
+						"{{blueprintId}}",
+						"deploymentSchema",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sample Payload",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"group\": \"/api/v3/cmp/groups/GRP-xm6xvg7o/\"\n}"
+				},
+				"url": {
+					"raw": "{{scheme}}://{{host}}:{{port}}/{{baseApiPath}}/blueprints/{{blueprintId}}/samplePayload/",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"{{baseApiPath}}",
+						"blueprints",
+						"{{blueprintId}}",
+						"samplePayload",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deploy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"deploymentItems\": {\n        \"plugin-bdi-olk0xwve\": {\n            \"parameters\": {\n                \"actiom_param1\": \"act1 value\",\n                \"actiom_param2\": \"act2 value\"\n            }\n        },\n        \"server-bdi-743tlxxu\": {\n            \"environment\": \"/api/v3/cmp/environments/ENV-su349w6z/\",\n            \"osBuild\": \"/api/v3/cmp/osBuilds/OSB-0ll21b1n/\",\n            \"parameters\": {\n                \"availability_domain\": \"GCtJ:US-ASHBURN-AD-1\",\n                \"env_param1\": \"Opt 1\",\n                \"grp_param1\": \"grp1 value\",\n                \"oci_assign_public_ip\": false,\n                \"oci_compartment_id\": \"ocid1.compartment.oc1..aaaaaaaan5ykl6lwtnq6llhqpl4b75g2mfoesy7ea47m2ppj7iigj2px6efq\",\n                \"sc_nic_0\": \"larry_private\",\n                \"shape\": \"VM.Standard2.1\"\n            }\n        }\n    },\n    \"group\": \"/api/v3/cmp/groups/GRP-yfbbsfht/\",\n    \"parameters\": {\n        \"bp_param1\": \"bp1 value\",\n        \"bp_param2\": 10,\n        \"bp_param3\": 3.14,\n        \"bp_param4\": true,\n        \"expiration_date\": \"2022-10-24\"\n    }\n}"
+				},
+				"url": {
+					"raw": "{{scheme}}://{{host}}:{{port}}/{{baseApiPath}}/blueprints/{{blueprintId}}/deploy/",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"{{baseApiPath}}",
+						"blueprints",
+						"{{blueprintId}}",
+						"deploy",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sample Payload From Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"order\": \"/api/v3/cmp/orders/ORD-275i64r0/\"\n}"
+				},
+				"url": {
+					"raw": "{{scheme}}://{{host}}:{{port}}/{{baseApiPath}}/blueprints/{{blueprintId}}/samplePayload/",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"{{baseApiPath}}",
+						"blueprints",
+						"{{blueprintId}}",
+						"samplePayload",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deploy Custom Server",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"group\": \"/api/v3/cmp/groups/GRP-xm6xvg7o/\",\n    \"parameters\": {},\n    \"deploymentItems\": {\n        \"server-bdi-a2wg48ds\": {\n            \"environment\":  \"/api/v3/cmp/environments/ENV-2yxaggkp/\",\n            \"osBuild\": \"/api/v3/cmp/osBuilds/OSB-nc7kjaao/\",\n            \"parameters\": {\n                \"cpu_cnt\": 1,\n                \"mem_size\": 2,\n                \"vmware_disk_type\": \"Thin Provision\",\n                \"vmware_datastore\": \"ds-eng-esxi03\",\n                \"sc_nic_0\": \"ENG-VLAN064 Short-Term\",\n                \"hostname\": \"mytestvm1\"\n            }\n        }\n    }   \n}"
+				},
+				"url": {
+					"raw": "{{scheme}}://{{host}}:{{port}}/{{baseApiPath}}/blueprints/BP-xcdwtjg9/deploy/",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"{{baseApiPath}}",
+						"blueprints",
+						"BP-xcdwtjg9",
+						"deploy",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deploy FileUpload  Inputs",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var blueprintGroup = \"/api/v3/cmp/groups/GRP-ppusiwa3/\";",
+							"var blueprintParameters = {",
+							"    \"bp_fileupload_param\": \"bpfileupload.txt\"",
+							"};",
+							"var blueprintDeploymentItems = {",
+							"    \"plugin-bdi-owcqznum\": {",
+							"        \"parameters\": {",
+							"            \"file\": \"sifileupload.txt\"",
+							"        }",
+							"    }",
+							"};",
+							"",
+							"pm.variables.set(\"blueprintGroup\", blueprintGroup);",
+							"pm.variables.set(\"blueprintParameters\", JSON.stringify(blueprintParameters));",
+							"pm.variables.set(\"blueprintDeploymentItems\", JSON.stringify(blueprintDeploymentItems));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "files",
+							"type": "file",
+							"src": []
+						},
+						{
+							"key": "group",
+							"value": "{{blueprintGroup}}",
+							"contentType": "",
+							"type": "text"
+						},
+						{
+							"key": "parameters",
+							"value": "{{blueprintParameters}}",
+							"contentType": "application/json",
+							"type": "text"
+						},
+						{
+							"key": "deploymentItems",
+							"value": "{{blueprintDeploymentItems}}",
+							"contentType": "application/json",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{scheme}}://{{host}}:{{port}}/{{baseApiPath}}/blueprints/{{blueprintId}}/deploy/",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"{{baseApiPath}}",
+						"blueprints",
+						"{{blueprintId}}",
+						"deploy",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Calculate Tier Rates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"group\": \"/api/v3/cmp/groups/GRP-ppusiwa3/\",\n    \"blueprintTiers\": {\n        \"network-bdi-wfn05j39\": {},\n        \"plugin-bdi-w8zsh37t\": {\n            \"parameters\": {\n                \"my_param1\": \"large\"\n            }\n        },\n        \"tfoperation-bdi-6734htt2\": {\n            \"environment\": \"/api/v3/cmp/environments/ENV-beplv4dj/\",\n            \"parameters\": {}\n        },\n        \"script-bdi-y4m8jnbb\": {\n            \"parameters\": {\n                \"my_param1\": \"medium\"\n            }\n        },\n        \"copy-bdi-xp3mkmuv\": {},\n        \"email-bdi-lzl2cncq\": {},\n        \"loadbalancer-bdi-fsa2wivs\": {},\n        \"pod-bdi-x6hvqhud\": {},\n        \"workflow-bdi-kftknvwu\": {},\n        \"server-bdi-k0alrttt\": {\n            \"environment\": \"/api/v3/cmp/environments/ENV-kld4ixkg/\",\n            \"osBuild\": \"/api/v3/cmp/osBuilds/OSB-kdzn7z98/\",\n            \"parameters\": {\n                \"cpu_cnt\": 4,\n                \"mem_size\": 4.0\n            }\n        },\n        \"blueprint-bdi-mvqjv95i\": {\n            \"blueprintTiers\": {\n                \"plugin-bdi-zlnj2gt2\": {\n                    \"parameters\": {\n                        \"sub_param1\": \"medium\",\n                        \"sub_param2\": 5\n                    }\n                },\n                \"server-bdi-hvx2co0y\": {\n                    \"environment\": \"/api/v3/cmp/environments/ENV-szamu0sw/\",\n                    \"osBuild\": \"/api/v3/cmp/osBuilds/OSB-kya6cb4f/\",\n                    \"parameters\": {\n                        \"hostname\": \"laltomareaws01\",\n                        \"instance_type\": \"t2.nano\"\n                    }\n                }\n            }\n        }\n    }\n}"
+				},
+				"url": {
+					"raw": "{{scheme}}://{{host}}:{{port}}/{{baseApiPath}}/blueprints/{{blueprintId}}/calculateTierRates/",
+					"protocol": "{{scheme}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"{{baseApiPath}}",
+						"blueprints",
+						"{{blueprintId}}",
+						"calculateTierRates",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{bearer_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
