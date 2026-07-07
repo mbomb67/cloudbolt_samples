@@ -122,6 +122,8 @@ def apply_configurations_in_aap(config_mgr, server, aap_applications,
 
     # Overwrite any protected keys - this should prevent CloudBolt from passing
     # secrets to Ansible
+    for key in protected_keys:
+        del extra_vars[key]
     protected_keys = []
 
     # Loop through the applications and add the server to the appropriate
