@@ -47,8 +47,10 @@ def apply_configurations_in_aap(config_mgr, server, aap_applications,
     job_progress = ProgressWrapper(job, logger=logger)
     extra_vars, protected_keys = config_mgr.generate_extra_vars(server)
 
-    # Overwrite any protected keys - this should prevent CloudBolt from passing
-    # secrets to Ansible
+    # Overwrite any protected keys and remove them from extra_vars - this should
+    # prevent CloudBolt from passing secrets to Ansible
+    for key in protected_keys:
+        del extra_vars[key]
     protected_keys = []
 
     # Loop through the applications and add the server to the appropriate
