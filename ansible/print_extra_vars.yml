@@ -1,0 +1,10 @@
+---
+- name: Print all variables (extra_vars included)
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Dump full variable scope
+      ansible.builtin.debug:
+        var: vars
