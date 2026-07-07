@@ -77,6 +77,10 @@ def patch_stale_clone():
         # The refresh above ran against a powered-off clone, so any IP it
         # surfaced is the template's stale IPv4Addresses, not a real runtime
         # address. Replace it with what this deploy actually expects.
+        logger.info(
+            f"Getting ready to reset stale template IP {server.ip} on "
+            f"{server.hostname} to expected value for this deploy."
+        )
         self._reset_stale_clone_ip(server)
 
         # The response doesn't have a task ID, so just return the server's ID
@@ -113,9 +117,17 @@ def patch_stale_clone():
 
         nic = server.nics.first()
         if nic is not None and (nic.ip or "") != expected:
+            logger.info(
+                f"Resetting stale template NIC IP {nic.ip} on {server.hostname} "
+                f"to expected value {expected!r} for this deploy."
+            )
             nic.ip = expected
             nic.save()
         if (server.ip or "") != expected:
+            logger.info(
+                f"Resetting stale template IP {server.ip} on {server.hostname} "
+                f"to expected value {expected!r} for this deploy."
+            )
             server.ip = expected
             server.save()
 
