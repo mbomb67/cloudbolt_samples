@@ -49,9 +49,15 @@ a size only if ALL applicable constraints hold:
      in the SKU's `location_info[].zones` for the region (minus zone-restricted).
   8. Storage: Premium SSD / Ultra -> require `PremiumIO` == True.
 
-Fail-open: any dimension we cannot determine (custom image with no marketplace
-reference, SDK/network error, capability absent) is not filtered on, so the
-order stays orderable. Everything is logged.
+Image architecture/generation is read per image type: marketplace (live
+VirtualMachineImage lookup), Compute Gallery (image-definition architecture +
+generation), managed image (always x64 + real generation), and raw VHD blob
+(x64, generation unknown). Arm64 is only possible via a Compute Gallery.
+
+Fail-open: any dimension we cannot determine (SDK/network error, capability
+absent, unreadable custom image) is not filtered on, so the order stays
+orderable. Set DEBUG_LOGGING = True to emit an "azure_image"-prefixed trace of
+every decision point (grep azure_image <logfile>) when troubleshooting.
 
 External API grounding (docs cited at call sites; not extrapolated from memory):
   - Resource SKUs list + capabilities/restrictions:
@@ -70,6 +76,26 @@ from infrastructure.models import Environment
 from utilities.logger import ThreadLogger
 
 logger = ThreadLogger(__name__)
+
+# Flip to True in an environment where you need to troubleshoot this plugin.
+# When True, every decision point emits an "azure_image"-prefixed INFO line
+# (grep azure_image <logfile>). Left False so normal order-form renders stay
+# quiet. This gates ALL of the plugin's diagnostics, including failure paths.
+DEBUG_LOGGING = False
+
+
+def _log(msg, *args):
+    """Troubleshooting log line, prefixed for grep: `grep azure_image <logfile>`.
+
+    No-op unless DEBUG_LOGGING is True; never raises.
+    """
+    if not DEBUG_LOGGING:
+        return
+    try:
+        logger.info("azure_image " + msg, *args)
+    except Exception:  # noqa: BLE001 -- logging must never break option generation
+        pass
+
 
 PARAM_NAME = "node_size"
 
@@ -226,38 +252,71 @@ def _get_azure_image(os_build, rh, env):
             rh, environment=env, region=(getattr(env, "node_location", "") or "")
         )
     except Exception as exc:  # noqa: BLE001
-        logger.warning("node_size options: osba lookup failed for %s: %s", os_build, exc)
+        _log("osba lookup failed for %s: %s", os_build, exc)
         return None
     if osba is None:
+        _log("osba_for_resource_handler returned None for os_build=%r rh=%r region=%r",
+             getattr(os_build, "name", os_build), getattr(rh, "name", rh),
+             getattr(env, "node_location", None))
         return None
     cast = getattr(osba, "cast", None)
-    return cast() if callable(cast) else osba
+    image = cast() if callable(cast) else osba
+    _log("resolved OSBA -> %s (class=%s) pub=%r offer=%r sku=%r ver=%r image_id=%r blob_uri=%r",
+         getattr(image, "name", image), type(image).__name__,
+         getattr(image, "publisher", None), getattr(image, "offer", None),
+         getattr(image, "sku", None), getattr(image, "version", None),
+         getattr(image, "image_id", None), getattr(image, "blob_uri", None))
+    return image
 
 
 _VM_IMAGE_CACHE = {}
 
 
 def _image_requirements(rh, image):
-    """Return {"architecture", "generation"} for the image (None when unknown)."""
+    """Return {"architecture", "generation"} for the image (None when unknown).
+
+    Route by the concrete image reference FIRST. CloudBolt populates
+    publisher/offer/sku even on gallery/shared and custom images (publisher is a
+    placeholder such as 'shared'), so the image_id / blob_uri must take priority
+    over the marketplace pub/offer/sku path -- otherwise a gallery image gets
+    sent to the marketplace API and fails ("Publisher: shared was not found").
+
+    Cases:
+      - Compute Gallery image (.../galleries/.../images/...): the image
+        DEFINITION carries architecture (x64/Arm64) + hyperVGeneration.
+      - Managed image (.../Microsoft.Compute/images/...): always x64 (Arm64
+        requires a Gallery); read the real Hyper-V generation.
+      - Raw VHD blob: no ARM resource to query -> x64, generation unknown.
+      - Marketplace (real publisher/offer/sku, no custom image_id): live
+        VirtualMachineImage lookup.
+    Arm64 is ONLY possible via a Compute Gallery.
+    """
     reqs = {"architecture": None, "generation": None}
     if image is None:
         return reqs
+
+    image_id = getattr(image, "image_id", None) or ""
+    image_id_l = image_id.lower()
+    if "/galleries/" in image_id_l:
+        return _gallery_image_requirements(rh, image_id)
+    if "microsoft.compute/images/" in image_id_l:
+        return _managed_image_requirements(rh, image_id)
+    if getattr(image, "blob_uri", None):
+        _log("VHD blob image -> x64, generation unknown")
+        return {"architecture": "x64", "generation": None}
+
     publisher = getattr(image, "publisher", None)
     offer = getattr(image, "offer", None)
     sku = getattr(image, "sku", None)
     version = getattr(image, "version", None)
     region = getattr(image, "region", None) or getattr(rh, "location", None)
     if not (publisher and offer and sku):
-        # Custom/private image (no marketplace publisher/offer/sku). Azure
-        # Compute Gallery image *definitions* carry an architecture (x64/Arm64)
-        # and hyperVGeneration; legacy managed images and raw VHD blobs do NOT
-        # (and cannot be Arm64 at all -- Arm64 requires a Gallery + Gen2). So we
-        # can only recover architecture for gallery-backed images.
-        image_id = getattr(image, "image_id", None) or ""
-        if "/galleries/" in image_id.lower():
-            return _gallery_image_requirements(rh, image_id)
+        _log("no image_id/blob and incomplete marketplace ref (pub=%r offer=%r sku=%r) "
+             "-> architecture UNKNOWN", publisher, offer, sku)
         return reqs
 
+    _log("marketplace image lookup pub=%r offer=%r sku=%r ver=%r region=%r",
+         publisher, offer, sku, version, region)
     key = (publisher, offer, sku, version, region)
     vm_image = _VM_IMAGE_CACHE.get(key, "MISS")
     if vm_image == "MISS":
@@ -267,10 +326,11 @@ def _image_requirements(rh, image):
             getter = getattr(wrapper, "_get_virtual_machine_image", None) or getattr(
                 wrapper, "get_virtual_machine_image", None
             )
+            _log("marketplace getter=%s", getattr(getter, "__name__", getter))
             if getter is not None:
                 vm_image = getter(publisher, offer, sku, version, region)
         except Exception as exc:  # noqa: BLE001 -- fail open
-            logger.warning("node_size options: VM image lookup failed for %r: %s", key, exc)
+            _log("marketplace lookup RAISED for %r: %s", key, exc)
             vm_image = None
         _VM_IMAGE_CACHE[key] = vm_image
 
@@ -279,6 +339,10 @@ def _image_requirements(rh, image):
         reqs["architecture"] = str(arch).lower() if arch else None
         gen = getattr(vm_image, "hyper_v_generation", None)
         reqs["generation"] = str(gen).upper() if gen else None
+        _log("marketplace vm_image class=%s architecture=%r hyper_v_generation=%r -> reqs=%r",
+             type(vm_image).__name__, arch, gen, reqs)
+    else:
+        _log("marketplace vm_image is None -> architecture UNKNOWN (fail-open, no arch filter)")
     return reqs
 
 
@@ -301,12 +365,13 @@ def _gallery_image_requirements(rh, image_id):
         # The segment after /images/ is the image DEFINITION name (a trailing
         # /versions/<v> is ignored, which is what we want -- arch lives on the def).
         image_def = _parse_azure_id_segment(image_id, "images")
+        _log("gallery lookup rg=%r gallery=%r image_def=%r", rg, gallery, image_def)
         compute = _compute_client(rh) if (rg and gallery and image_def) else None
         if compute is not None:
             try:
                 gi = compute.gallery_images.get(rg, gallery, image_def)
             except Exception as exc:  # noqa: BLE001 -- fail open
-                logger.warning("node_size options: gallery image lookup failed for %s: %s", image_id, exc)
+                _log("gallery lookup RAISED for %s: %s", image_id, exc)
                 gi = None
         _VM_IMAGE_CACHE[cache_key] = gi
 
@@ -315,6 +380,43 @@ def _gallery_image_requirements(rh, image_id):
         reqs["architecture"] = str(arch).lower() if arch else None
         gen = getattr(gi, "hyper_v_generation", None)
         reqs["generation"] = str(gen).upper() if gen else None
+        _log("gallery image architecture=%r hyper_v_generation=%r -> reqs=%r", arch, gen, reqs)
+    else:
+        _log("gallery image is None -> architecture UNKNOWN (fail-open)")
+    return reqs
+
+
+def _managed_image_requirements(rh, image_id):
+    """Read requirements for a managed image (Microsoft.Compute/images).
+
+    Managed images cannot be Arm64 (Arm64 requires a Compute Gallery), so
+    architecture is always x64. We still read the real Hyper-V generation
+    (Image.hyper_v_generation) so the generation filter applies. Architecture
+    stays x64 even if the lookup fails (it cannot be anything else).
+
+    Docs: https://learn.microsoft.com/en-us/azure/virtual-machines/generation-2
+    """
+    reqs = {"architecture": "x64", "generation": None}
+    cache_key = ("managed", image_id)
+    img = _VM_IMAGE_CACHE.get(cache_key, "MISS")
+    if img == "MISS":
+        img = None
+        rg = _parse_azure_id_segment(image_id, "resourceGroups")
+        name = _parse_azure_id_segment(image_id, "images")
+        _log("managed image lookup rg=%r name=%r", rg, name)
+        compute = _compute_client(rh) if (rg and name) else None
+        if compute is not None:
+            try:
+                img = compute.images.get(rg, name)
+            except Exception as exc:  # noqa: BLE001 -- fail open (architecture stays x64)
+                _log("managed image lookup RAISED for %s: %s", image_id, exc)
+                img = None
+        _VM_IMAGE_CACHE[cache_key] = img
+
+    if img is not None:
+        gen = getattr(img, "hyper_v_generation", None)
+        reqs["generation"] = str(gen).upper() if gen else None
+    _log("managed image -> reqs=%r", reqs)
     return reqs
 
 
@@ -336,7 +438,7 @@ def _compute_client(rh):
         from resourcehandlers.azure_arm.azure_wrapper import configure_arm_client
         client = configure_arm_client(rh.get_api_wrapper(), ComputeManagementClient)
     except Exception as exc:  # noqa: BLE001 -- fail open
-        logger.warning("node_size options: could not build Compute client: %s", exc)
+        _log("could not build Compute client: %s", exc)
         client = None
     _COMPUTE_CLIENT_CACHE[key] = client
     return client
@@ -373,7 +475,7 @@ def _sku_capability_map(rh, region):
         except TypeError:
             skus = compute.resource_skus.list()  # older SDK signature
     except Exception as exc:  # noqa: BLE001 -- fail open
-        logger.warning("node_size options: resource_skus.list failed for %s: %s", region, exc)
+        _log("resource_skus.list failed for %s: %s", region, exc)
         return None
 
     region_l = (region or "").lower()
@@ -410,7 +512,7 @@ def _sku_capability_map(rh, region):
 
             result[sku.name] = {"caps": caps, "restricted": restricted, "zones": zones}
     except Exception as exc:  # noqa: BLE001 -- fail open on pagination/parse error
-        logger.warning("node_size options: error iterating SKUs for %s: %s", region, exc)
+        _log("error iterating SKUs for %s: %s", region, exc)
         return None
 
     _SKU_CACHE[key] = result
@@ -434,60 +536,59 @@ def _has_confidential_capability(caps):
     return False
 
 
-def _size_passes(size_name, sku_map, order, zone_data_available):
-    """Return True if the size satisfies every applicable constraint in `order`.
+def _reject_reason(size_name, sku_map, order, zone_data_available):
+    """Return None if the size satisfies every applicable constraint, else a short
+    reason string (used for both filtering and troubleshooting logs).
 
     Any dimension whose data is unavailable is not enforced (fail open), except
     architecture/generation/zone which are genuine deploy blockers when known.
     """
     info = sku_map.get(size_name)
     if info is None:
-        return False  # not offered in the region
+        return "not offered in region"
     if info["restricted"]:
-        return False
+        return "NotAvailableForSubscription"
     caps = info["caps"]
 
     # Architecture (default x64 when capability absent).
     if order.get("architecture"):
-        if str(caps.get("CpuArchitectureType", "x64")).lower() != order["architecture"]:
-            return False
+        sku_arch = str(caps.get("CpuArchitectureType", "x64")).lower()
+        if sku_arch != order["architecture"]:
+            return f"arch {sku_arch} != image {order['architecture']}"
 
     # Hyper-V generation.
     if order.get("generation"):
         gens = str(caps.get("HyperVGenerations", "") or "").upper()
         if gens and order["generation"] not in [g.strip() for g in gens.split(",")]:
-            return False
+            return f"gen {order['generation']} not in {gens}"
 
     # Security type (from the security_type_arm parameter; unset == Standard).
     sec = order.get("security_type")
-    if sec == "trustedlaunch":
-        if _cap_bool(caps, "TrustedLaunchDisabled"):
-            return False
-    elif sec == "confidentialvm":
-        if not _has_confidential_capability(caps):
-            return False
+    if sec == "trustedlaunch" and _cap_bool(caps, "TrustedLaunchDisabled"):
+        return "TrustedLaunchDisabled"
+    if sec == "confidentialvm" and not _has_confidential_capability(caps):
+        return "not confidential-capable"
 
     # Accelerated networking (only when requested).
-    if order.get("accelerated_networking") and "AcceleratedNetworkingEnabled" in caps:
-        if not _cap_bool(caps, "AcceleratedNetworkingEnabled"):
-            return False
+    if order.get("accelerated_networking") and "AcceleratedNetworkingEnabled" in caps \
+            and not _cap_bool(caps, "AcceleratedNetworkingEnabled"):
+        return "no AcceleratedNetworkingEnabled"
 
     # Encryption at host (only when requested).
-    if order.get("encryption_at_host") and "EncryptionAtHostSupported" in caps:
-        if not _cap_bool(caps, "EncryptionAtHostSupported"):
-            return False
+    if order.get("encryption_at_host") and "EncryptionAtHostSupported" in caps \
+            and not _cap_bool(caps, "EncryptionAtHostSupported"):
+        return "no EncryptionAtHostSupported"
 
     # Availability zone (only when a zone is selected and zone data exists).
     zone = order.get("zone")
-    if zone and zone_data_available:
-        if zone not in info["zones"]:
-            return False
+    if zone and zone_data_available and zone not in info["zones"]:
+        return f"zone {zone} not in {sorted(info['zones'])}"
 
     # Premium / Ultra storage requires PremiumIO.
     if order.get("premium_required") and "PremiumIO" in caps and not _cap_bool(caps, "PremiumIO"):
-        return False
+        return "no PremiumIO"
 
-    return True
+    return None
 
 
 def _size_label(size_name, sku_map):
@@ -536,12 +637,20 @@ def get_options_list(field, control_value=None, control_value_dict=None,
                      form_data=None, form_prefix=None, **kwargs):
     """Return env-configured node sizes that Azure can actually deploy for this order."""
     cvd = _controllers(control_value_dict, kwargs)
+    _log("=== get_options_list start === control_value type=%s repr=%.120r | "
+         "control_value_dict keys=%s | form_prefix=%r | kwargs keys=%s",
+         type(control_value).__name__, control_value, sorted(cvd.keys()),
+         form_prefix, sorted(kwargs.keys()))
+
     env = _resolve_environment(kwargs, form_data, form_prefix)
     if env is None:
+        _log("no environment resolved -> prompting to select an environment")
         return [("", "------ Select an environment first ------")]
 
     # Base set = sizes configured on node_size for this environment (native pattern).
     base_sizes = _env_configured_sizes(field, env)
+    _log("environment=%r (id=%s) base_sizes(%d)=%s",
+         getattr(env, "name", env), getattr(env, "id", None), len(base_sizes), base_sizes)
     if not base_sizes:
         return [("", "------ No node sizes configured for this environment ------")]
 
@@ -550,16 +659,23 @@ def get_options_list(field, control_value=None, control_value_dict=None,
 
     from resourcehandlers.azure_arm.models import AzureARMHandler
     if not isinstance(rh, AzureARMHandler) or not region:
-        # non-Azure / no region -> can't apply SKU filters or enrich labels.
+        _log("rh=%s (Azure=%s) region=%r -> NOT filtering (returning base sizes unfiltered)",
+             type(rh).__name__ if rh else None, isinstance(rh, AzureARMHandler), region)
         return _result(base_sizes, {})
 
     sku_map = _sku_capability_map(rh, region)
     if sku_map is None:
-        logger.info("node_size options: SKU data unavailable for %s; returning env sizes.", region)
+        _log("SKU data unavailable for region=%r -> returning base sizes UNFILTERED", region)
         return _result(base_sizes, {})
+    _log("region=%r sku_map has %d VM sizes", region, len(sku_map))
 
     # Image-derived requirements (architecture / generation).
     os_build = _resolve_os_build(cvd, control_value, form_data, form_prefix)
+    _log("resolved os_build=%r (type=%s)",
+         getattr(os_build, "name", os_build), type(os_build).__name__)
+    if not os_build:
+        _log("os_build NOT resolved -> architecture UNKNOWN (no arch filter). "
+             "Most likely the os_build REGENOPTIONS dependency is not wired to node_size.")
     image_reqs = _image_requirements(rh, _get_azure_image(os_build, rh, env)) if os_build \
         else {"architecture": None, "generation": None}
 
@@ -583,8 +699,19 @@ def get_options_list(field, control_value=None, control_value_dict=None,
 
     # Zone filter is meaningful only if the region actually reports zones for any size.
     zone_data_available = any(info["zones"] for info in sku_map.values())
+    _log("order=%r zone_data_available=%s", order, zone_data_available)
 
-    surviving = [s for s in base_sizes if _size_passes(s, sku_map, order, zone_data_available)]
+    surviving = []
+    for size in base_sizes:
+        reason = _reject_reason(size, sku_map, order, zone_data_available)
+        sku_arch = ((sku_map.get(size) or {}).get("caps", {}) or {}).get("CpuArchitectureType", "x64")
+        if reason is None:
+            surviving.append(size)
+            _log("size %s: KEEP (sku CpuArchitectureType=%s)", size, sku_arch)
+        else:
+            _log("size %s: DROP (%s)", size, reason)
+
+    _log("=== result === %d/%d sizes survived: %s", len(surviving), len(base_sizes), surviving)
 
     if not surviving:
         return [("", "No Node Sizes Available for selected options")]
