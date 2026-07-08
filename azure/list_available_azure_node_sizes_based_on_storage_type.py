@@ -248,7 +248,15 @@ def _image_requirements(rh, image):
     version = getattr(image, "version", None)
     region = getattr(image, "region", None) or getattr(rh, "location", None)
     if not (publisher and offer and sku):
-        return reqs  # custom/private image: no marketplace reference
+        # Custom/private image (no marketplace publisher/offer/sku). Azure
+        # Compute Gallery image *definitions* carry an architecture (x64/Arm64)
+        # and hyperVGeneration; legacy managed images and raw VHD blobs do NOT
+        # (and cannot be Arm64 at all -- Arm64 requires a Gallery + Gen2). So we
+        # can only recover architecture for gallery-backed images.
+        image_id = getattr(image, "image_id", None) or ""
+        if "/galleries/" in image_id.lower():
+            return _gallery_image_requirements(rh, image_id)
+        return reqs
 
     key = (publisher, offer, sku, version, region)
     vm_image = _VM_IMAGE_CACHE.get(key, "MISS")
@@ -274,10 +282,74 @@ def _image_requirements(rh, image):
     return reqs
 
 
+def _gallery_image_requirements(rh, image_id):
+    """Read architecture/generation from an Azure Compute Gallery image DEFINITION.
+
+    The gallery image definition (Microsoft.Compute/galleries/images) carries the
+    `architecture` (x64/Arm64) and `hyper_v_generation` properties -- the image
+    version does not override them. Fails open (Nones) on any parse/SDK error.
+
+    Docs: https://learn.microsoft.com/en-us/azure/virtual-machines/image-version
+    """
+    reqs = {"architecture": None, "generation": None}
+    cache_key = ("gallery", image_id)
+    gi = _VM_IMAGE_CACHE.get(cache_key, "MISS")
+    if gi == "MISS":
+        gi = None
+        rg = _parse_azure_id_segment(image_id, "resourceGroups")
+        gallery = _parse_azure_id_segment(image_id, "galleries")
+        # The segment after /images/ is the image DEFINITION name (a trailing
+        # /versions/<v> is ignored, which is what we want -- arch lives on the def).
+        image_def = _parse_azure_id_segment(image_id, "images")
+        compute = _compute_client(rh) if (rg and gallery and image_def) else None
+        if compute is not None:
+            try:
+                gi = compute.gallery_images.get(rg, gallery, image_def)
+            except Exception as exc:  # noqa: BLE001 -- fail open
+                logger.warning("node_size options: gallery image lookup failed for %s: %s", image_id, exc)
+                gi = None
+        _VM_IMAGE_CACHE[cache_key] = gi
+
+    if gi is not None:
+        arch = getattr(gi, "architecture", None)
+        reqs["architecture"] = str(arch).lower() if arch else None
+        gen = getattr(gi, "hyper_v_generation", None)
+        reqs["generation"] = str(gen).upper() if gen else None
+    return reqs
+
+
 # ---------------------------------------------------------------------------
 # Live Azure Resource SKU capability map for the region.
 # ---------------------------------------------------------------------------
 _SKU_CACHE = {}
+_COMPUTE_CLIENT_CACHE = {}
+
+
+def _compute_client(rh):
+    """Return a cached ComputeManagementClient for the handler, or None."""
+    key = getattr(rh, "id", None)
+    if key in _COMPUTE_CLIENT_CACHE:
+        return _COMPUTE_CLIENT_CACHE[key]
+    client = None
+    try:
+        from azure.mgmt.compute import ComputeManagementClient
+        from resourcehandlers.azure_arm.azure_wrapper import configure_arm_client
+        client = configure_arm_client(rh.get_api_wrapper(), ComputeManagementClient)
+    except Exception as exc:  # noqa: BLE001 -- fail open
+        logger.warning("node_size options: could not build Compute client: %s", exc)
+        client = None
+    _COMPUTE_CLIENT_CACHE[key] = client
+    return client
+
+
+def _parse_azure_id_segment(resource_id, key):
+    """Return the value following /<key>/ in an Azure resource ID (case-insensitive)."""
+    parts = [p for p in str(resource_id or "").split("/") if p]
+    kl = key.lower()
+    for i in range(len(parts) - 1):
+        if parts[i].lower() == kl:
+            return parts[i + 1]
+    return None
 
 
 def _sku_capability_map(rh, region):
@@ -289,16 +361,11 @@ def _sku_capability_map(rh, region):
     if key in _SKU_CACHE:
         return _SKU_CACHE[key]
 
-    try:
-        from azure.mgmt.compute import ComputeManagementClient
-        from resourcehandlers.azure_arm.azure_wrapper import configure_arm_client
-    except ImportError as exc:
-        logger.warning("node_size options: azure-mgmt-compute unavailable: %s", exc)
+    compute = _compute_client(rh)
+    if compute is None:
         return None
 
     try:
-        wrapper = rh.get_api_wrapper()
-        compute = configure_arm_client(wrapper, ComputeManagementClient)
         # Docs: Resource SKUs - List. OData filter narrows to the region.
         # https://learn.microsoft.com/en-us/rest/api/compute/resource-skus/list
         try:
