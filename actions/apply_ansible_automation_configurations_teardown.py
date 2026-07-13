@@ -30,11 +30,21 @@ def generate_options_for_ansible_config_ids(field, blueprint, **kwargs):
     return [(c.id, c.name) for c in confs]
 
 
+def generate_options_for_blueprints_filter(field, blueprint, **kwargs):
+    return [(bp.id, bp.name) for bp in ServiceBlueprint.objects.all()]
+
+
 def run(job, server=None, **kwargs):
     if not server:
         return "FAILURE", "", "Server object was not passed to the plugin. "
     ansible_config_ids = ast.literal_eval("""{{ ansible_config_ids }}""")
     logger.debug(f'ansible_config_ids: {ansible_config_ids}')
+    bp_ids = ast.literal_eval("""{{ blueprints_filter }}""")
+    bps = ServiceBlueprint.objects.filter(id__in=bp_ids)
+    if server.service_item.blueprint not in bps:
+        logger.debug(f'Server {server.hostname} was not created from a BP '
+                     f'associated with this plugin. Skipping...')
+        return "SUCCESS", "", ""
 
     aap_apps = AAPApplication.objects.filter(id__in=ansible_config_ids)
 
