@@ -1,0 +1,26 @@
+#cloud-config
+hostname: "{{ server.hostname }}"
+fqdn: "{{ server.hostname }}.{{ server.sc_nic_0.dns_domain }}"
+
+write_files:
+  - path: /etc/sysconfig/network-scripts/ifcfg-ens3
+    owner: root:root
+    permissions: '0644'
+    content: |
+      TYPE=Ethernet
+      BOOTPROTO=none
+      NAME=ens3
+      DEVICE=ens3
+      ONBOOT=yes
+      IPADDR={{ server.sc_nic_0_ip }}
+      NETMASK={{ server.sc_nic_0.netmask }}
+      GATEWAY={{ server.sc_nic_0.gateway }}
+      DNS1={{ server.sc_nic_0.dns1 }}
+      DOMAIN={{ server.sc_nic_0.dns_domain }}
+
+runcmd:
+  # Reload NetworkManager to detect the newly written ifcfg file
+  - nmcli connection reload
+  # Bring the interface up with the new static IP configuration
+  - nmcli connection up ens3
+    no-auto-default=*
