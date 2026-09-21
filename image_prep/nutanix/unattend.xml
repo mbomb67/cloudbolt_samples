@@ -56,16 +56,20 @@
                 <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
                 <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
                 <ProtectYourPC>3</ProtectYourPC>
-                <SkipMachineOOBE>true</SkipMachineOOBE>
-                <SkipUserOOBE>true</SkipUserOOBE>
                 <UnattendEnableRetailDemo>false</UnattendEnableRetailDemo>
             </OOBE>
             <UserAccounts>
                 <AdministratorPassword>
                     <Value>{{ server.password|salt_and_encode_windows_password }}</Value>
-                    <PlainText>true</PlainText>
+                    <PlainText>false</PlainText>
                 </AdministratorPassword>
             </UserAccounts>
+        </component>
+        <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <InputLocale>en-US</InputLocale>
+            <SystemLocale>en-US</SystemLocale>
+            <UILanguage>en-US</UILanguage>
+            <UserLocale>en-US</UserLocale>
         </component>
     </settings>
 </unattend>
