@@ -34,6 +34,13 @@ subnets) and NO guestCustomization (cloud-init uses exactly one datasource;
 operator user-data from `acropolis_user_data` is merged into the seed's
 user-data instead).
 
+Seed mode only applies to unmanaged subnets. Before building the seed, the
+patch reads GET /api/networking/v4.0/config/subnets/{extId}; if Nutanix manages
+IPs on that subnet (subnetType OVERLAY, or an ipConfig is present) the seed is
+skipped and the build falls back to Patch 1 (ipv4Config). Without that check a
+managed subnet gets no ipv4Config and Nutanix allocates from its pool, which
+fails with VM_NIC_ADDRESS_POOL_EXHAUSTED when the pool is empty.
+
 All Nutanix calls go through CloudBolt's existing PrismRESTClient (plain REST
 via `requests`). The JSON property names and URL paths below were checked
 against Nutanix's published v4.0 API definition (the generated model files of
@@ -74,7 +81,8 @@ logger = ThreadLogger(__name__)
 # ---------------------------------------------------------------------------
 # Server parameter (Boolean) that turns the seed path on for a build. Create a
 # Parameter named exactly this and set it True on the environment / blueprint
-# used for unmanaged-subnet static-IP builds.
+# used for unmanaged-subnet static-IP builds. It is ignored (with a log line)
+# when the selected subnet turns out to be managed by Nutanix.
 SEED_PARAMETER_NAME = "acropolis_nocloud_seed"
 
 # Base URL Prism Central will use to download the ISO from this appliance.
@@ -213,6 +221,34 @@ def _build_seed_spec(server, rendered_user_data):
     }
 
 
+def _subnet_is_managed(rh, network):
+    """Ask Nutanix whether it manages IPs (IPAM) on the server's NIC 0 subnet.
+
+    Managed subnets take the Infoblox IP as NIC ipv4Config (Patch 1); only
+    unmanaged ones need the NoCloud seed. Overlay (VPC) subnets are always
+    managed; a VLAN subnet is managed when it carries an ipConfig. Read live
+    because the synced ResourceNetwork does not record this for v4.0.
+    """
+    subnet_ext_id = getattr(network, "network", None)
+    if not subnet_ext_id:
+        raise CloudBoltException(
+            "acropolis_nocloud_seed: server has no Nutanix subnet on NIC 0."
+        )
+    wrapper = rh.get_api_wrapper()
+    uri = "networking/{}/config/subnets/{}".format(wrapper.api_version, subnet_ext_id)
+    subnet = wrapper.client.get(uri).get("data") or {}
+    managed = subnet.get("subnetType") == "OVERLAY" or bool(subnet.get("ipConfig"))
+    logger.info(
+        "acropolis_nocloud_seed: subnet %s (%s) subnetType=%s ipConfig=%s -> %s",
+        subnet.get("name"),
+        subnet_ext_id,
+        subnet.get("subnetType"),
+        bool(subnet.get("ipConfig")),
+        "managed" if managed else "unmanaged",
+    )
+    return managed
+
+
 def patch_nutanix_v4_seed_kwargs():
     original = AcropolisResourceHandler.get_create_resource_kwargs
 
@@ -229,6 +265,17 @@ def patch_nutanix_v4_seed_kwargs():
             logger.warning(
                 "acropolis_nocloud_seed set on Windows server %s; cloud-init NoCloud "
                 "seeding is Linux-only. Ignoring the parameter.",
+                server.id,
+            )
+            return kwargs
+
+        # Only unmanaged subnets need the seed. On a managed subnet keep "ip" so
+        # Patch 1 sends it as ipv4Config; dropping it makes Nutanix allocate from
+        # the subnet pool instead (VM_NIC_ADDRESS_POOL_EXHAUSTED when it is empty).
+        if _subnet_is_managed(self, kwargs.get("network")):
+            logger.info(
+                "acropolis_nocloud_seed set on server %s but its subnet is managed; "
+                "using Nutanix IPAM (ipv4Config) instead of the seed.",
                 server.id,
             )
             return kwargs
