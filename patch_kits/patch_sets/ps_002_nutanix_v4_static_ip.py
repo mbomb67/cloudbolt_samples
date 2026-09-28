@@ -34,12 +34,16 @@ subnets) and NO guestCustomization (cloud-init uses exactly one datasource;
 operator user-data from `acropolis_user_data` is merged into the seed's
 user-data instead).
 
-Seed mode only applies to unmanaged subnets. Before building the seed, the
-patch reads GET /api/networking/v4.0/config/subnets/{extId}; if Nutanix manages
-IPs on that subnet (subnetType OVERLAY, or an ipConfig is present) the seed is
-skipped and the build falls back to Patch 1 (ipv4Config). Without that check a
-managed subnet gets no ipv4Config and Nutanix allocates from its pool, which
-fails with VM_NIC_ADDRESS_POOL_EXHAUSTED when the pool is empty.
+Managed vs. unmanaged subnets: before building the seed, the patch reads
+GET /api/networking/v4.0/config/subnets/{extId} to learn whether Nutanix
+manages IPs on that subnet (subnetType OVERLAY, or an ipConfig is present).
+- Unmanaged: Prism rejects NIC ipv4Config, so "ip" is dropped from the create
+  kwargs and the guest gets its address ONLY from the seed.
+- Managed: the external-IPAM (Infoblox) IP is BOTH sent to Nutanix as NIC
+  ipv4Config (Patch 1; Nutanix needs it to create the NIC without dipping into
+  its own pool — an empty pool otherwise fails the build with
+  VM_NIC_ADDRESS_POOL_EXHAUSTED) AND written into the seed so cloud-init
+  configures the same address inside the guest.
 
 All Nutanix calls go through CloudBolt's existing PrismRESTClient (plain REST
 via `requests`). The JSON property names and URL paths below were checked
@@ -81,8 +85,8 @@ logger = ThreadLogger(__name__)
 # ---------------------------------------------------------------------------
 # Server parameter (Boolean) that turns the seed path on for a build. Create a
 # Parameter named exactly this and set it True on the environment / blueprint
-# used for unmanaged-subnet static-IP builds. It is ignored (with a log line)
-# when the selected subnet turns out to be managed by Nutanix.
+# used for static-IP builds. On managed subnets the IP is also sent to Nutanix
+# as NIC ipv4Config; on unmanaged subnets the seed alone carries it.
 SEED_PARAMETER_NAME = "acropolis_nocloud_seed"
 
 # Base URL Prism Central will use to download the ISO from this appliance.
@@ -224,10 +228,11 @@ def _build_seed_spec(server, rendered_user_data):
 def _subnet_is_managed(rh, network):
     """Ask Nutanix whether it manages IPs (IPAM) on the server's NIC 0 subnet.
 
-    Managed subnets take the Infoblox IP as NIC ipv4Config (Patch 1); only
-    unmanaged ones need the NoCloud seed. Overlay (VPC) subnets are always
-    managed; a VLAN subnet is managed when it carries an ipConfig. Read live
-    because the synced ResourceNetwork does not record this for v4.0.
+    Managed subnets must also receive the Infoblox IP as NIC ipv4Config
+    (Patch 1) or Nutanix allocates from its own pool; unmanaged subnets reject
+    ipv4Config, so there the seed alone carries the IP. Overlay (VPC) subnets
+    are always managed; a VLAN subnet is managed when it carries an ipConfig.
+    Read live because the synced ResourceNetwork does not record this for v4.0.
     """
     subnet_ext_id = getattr(network, "network", None)
     if not subnet_ext_id:
@@ -269,30 +274,30 @@ def patch_nutanix_v4_seed_kwargs():
             )
             return kwargs
 
-        # Only unmanaged subnets need the seed. On a managed subnet keep "ip" so
-        # Patch 1 sends it as ipv4Config; dropping it makes Nutanix allocate from
-        # the subnet pool instead (VM_NIC_ADDRESS_POOL_EXHAUSTED when it is empty).
-        if _subnet_is_managed(self, kwargs.get("network")):
-            logger.info(
-                "acropolis_nocloud_seed set on server %s but its subnet is managed; "
-                "using Nutanix IPAM (ipv4Config) instead of the seed.",
-                server.id,
-            )
-            return kwargs
-
         # Operator user-data was already rendered by the original method; move it
         # into the seed so it is NOT also sent as native guestCustomization.
         rendered_user_data = kwargs.pop("acropolis_user_data", None)
         kwargs["nocloud_seed"] = _build_seed_spec(server, rendered_user_data)
-        # Unmanaged subnets reject NIC ipv4Config; the guest gets the IP from the seed.
-        kwargs.pop("ip", None)
+
+        # The seed always configures the guest. Whether Nutanix ALSO gets the IP
+        # depends on the subnet:
+        # - managed: keep "ip" so Patch 1 sends it as NIC ipv4Config (dropping it
+        #   makes Nutanix allocate from its own pool, which fails with
+        #   VM_NIC_ADDRESS_POOL_EXHAUSTED when the pool is empty),
+        # - unmanaged: drop "ip" because Prism rejects ipv4Config there.
+        managed = _subnet_is_managed(self, kwargs.get("network"))
+        if not managed:
+            kwargs.pop("ip", None)
         logger.info(
-            "acropolis_nocloud_seed: server %s will get %s/%s gw=%s dns=%s via seed",
+            "acropolis_nocloud_seed: server %s will get %s/%s gw=%s dns=%s via seed "
+            "(subnet is %s; Nutanix ipv4Config %s)",
             server.id,
             kwargs["nocloud_seed"]["ip"],
             kwargs["nocloud_seed"]["prefix"],
             kwargs["nocloud_seed"]["gateway"],
             kwargs["nocloud_seed"]["dns_servers"],
+            "managed" if managed else "unmanaged",
+            "will also be sent" if managed else "will not be sent",
         )
         return kwargs
 
@@ -805,8 +810,9 @@ def patch_nutanix_v4_static_ip():
         # CloudBolt sets kwargs["ip"] from server.sc_nic_0_ip, which the built-in
         # IPAM step (Infoblox allocate_ip) populates before create_resource().
         # The Infoblox plug-in can return the literal string "dhcp"; skip that.
-        # In NoCloud seed mode "ip" has already been removed from kwargs (unmanaged
-        # subnets reject ipv4Config); the guest gets its address from the seed.
+        # In NoCloud seed mode "ip" is only present when the subnet is managed
+        # (unmanaged subnets reject ipv4Config, so there the kwargs hook removed
+        # it and the guest gets its address from the seed alone).
         requested_ip = kwargs.get("ip")
         if requested_ip and requested_ip != "dhcp":
             vm_payload["nics"][0]["networkInfo"]["ipv4Config"] = {
