@@ -45,6 +45,16 @@ manages IPs on that subnet (subnetType OVERLAY, or an ipConfig is present).
   VM_NIC_ADDRESS_POOL_EXHAUSTED) AND written into the seed so cloud-init
   configures the same address inside the guest.
 
+Seed user account: when credentials are EXPLICITLY set for the build (image /
+environment / server — username plus a password and/or an SSH key, resolved by
+get_server_credentials with include_default_values=False so the "root" /
+"Administrator" fallbacks never trigger this), the seed's user-data also
+creates that account: sudoers entry, SHA-512 crypt hash of the password (the
+ISO never carries it in plaintext), and the public key derived from the stored
+CloudBolt SSH key. When a password is set, sudo requires it and ssh_pwauth is
+enabled; key-only accounts get NOPASSWD sudo. Existing accounts (for instance
+the image's default user) are modified, not duplicated, by cloud-init.
+
 Patch 3 (new): report the ASSIGNED IP back to CloudBolt. Nutanix does not
 repeat a NIC's assigned (networkInfo.ipv4Config) address in
 ipv4Info.learnedIpAddresses — verified on-cluster: a VM running on its
@@ -88,6 +98,7 @@ from resourcehandlers.acropolis.acropolis_wrapper import (
 )
 from resourcehandlers.acropolis.models import AcropolisResourceHandler
 from utilities.exceptions import CloudBoltException
+from utilities.models import SSHKey
 from utilities.logger import ThreadLogger
 
 logger = ThreadLogger(__name__)
@@ -163,7 +174,65 @@ def _seed_base_url():
     return base
 
 
-def _build_seed_spec(server, rendered_user_data):
+def _seed_user_spec(rh, server):
+    """Return {'name', 'passwd_hash', 'ssh_keys'} for the seed's user account.
+
+    Only built from credentials someone explicitly set (image / environment /
+    server); include_default_values=False keeps the implicit "root" /
+    "Administrator" / "ubuntu" fallbacks from creating accounts. Returns None
+    when no usable account is configured.
+    """
+    creds = rh.get_server_credentials(
+        server.id,
+        raise_exception_if_keyfile_not_on_cb=False,
+        arm_for_use=False,
+        include_default_values=False,
+    )
+    username = (creds.get("username") or "").strip()
+    if not username:
+        return None
+
+    password = creds.get("password") or None
+    passwd_hash = None
+    if password:
+        # SHA-512 crypt so the ISO (which persists as a Prism Central image)
+        # never contains the plaintext. crypt is POSIX-only; the appliance is
+        # Linux, so import here rather than at module scope.
+        import crypt
+
+        passwd_hash = crypt.crypt(password, crypt.mksalt(crypt.METHOD_SHA512))
+
+    ssh_keys = []
+    key_name, key_is_global = server.get_ssh_key_creds_from_cfvs()
+    if key_name:
+        key = SSHKey.objects.filter(
+            resource_handler=None if key_is_global else rh, name=key_name
+        ).first()
+        public_key = key.cast().public_key if key else None
+        if public_key:
+            ssh_keys.append(public_key)
+        else:
+            logger.warning(
+                "acropolis_nocloud_seed: SSH key '%s' is set for server %s but no "
+                "public key could be derived from it; the seed account will not "
+                "get an authorized key.",
+                key_name,
+                server.id,
+            )
+
+    if not passwd_hash and not ssh_keys:
+        logger.warning(
+            "acropolis_nocloud_seed: username '%s' is set for server %s but there "
+            "is no password or resolvable SSH key; not creating the account.",
+            username,
+            server.id,
+        )
+        return None
+
+    return {"name": username, "passwd_hash": passwd_hash, "ssh_keys": ssh_keys}
+
+
+def _build_seed_spec(rh, server, rendered_user_data):
     """Return the dict create_v4_vm needs to build and attach the NoCloud seed.
 
     Raises CloudBoltException on any missing input so the job fails BEFORE the
@@ -232,6 +301,7 @@ def _build_seed_spec(server, rendered_user_data):
         "prefix": prefix,
         "gateway": gateway,
         "dns_servers": dns_servers,
+        "user": _seed_user_spec(rh, server),
         "user_data": rendered_user_data,
         "base_url": _seed_base_url(),  # validated now so we fail before create
     }
@@ -289,7 +359,7 @@ def patch_nutanix_v4_seed_kwargs():
         # Operator user-data was already rendered by the original method; move it
         # into the seed so it is NOT also sent as native guestCustomization.
         rendered_user_data = kwargs.pop("acropolis_user_data", None)
-        kwargs["nocloud_seed"] = _build_seed_spec(server, rendered_user_data)
+        kwargs["nocloud_seed"] = _build_seed_spec(self, server, rendered_user_data)
 
         # The seed always configures the guest. Whether Nutanix ALSO gets the IP
         # depends on the subnet:
@@ -361,16 +431,42 @@ def _build_network_config(seed, mac):
 
 
 def _housekeeping_user_data(seed):
-    lines = [
-        "#cloud-config",
-        "# CloudBolt NoCloud seed housekeeping.",
-        "manual_cache_clean: true",
-        "preserve_hostname: false",
-        "hostname: {}".format(seed["hostname"]),
-    ]
+    """CloudBolt's own cloud-config: hostname housekeeping plus, when the build
+    has explicit credentials, the seed user account (sudoers + password hash
+    and/or SSH public key)."""
+    doc = {
+        "manual_cache_clean": True,
+        "preserve_hostname": False,
+        "hostname": seed["hostname"],
+    }
     if seed.get("dns_domain"):
-        lines.append("fqdn: {}.{}".format(seed["hostname"], seed["dns_domain"]))
-    return "\n".join(lines) + "\n"
+        doc["fqdn"] = "{}.{}".format(seed["hostname"], seed["dns_domain"])
+
+    user = seed.get("user")
+    if user:
+        entry = {"name": user["name"], "shell": "/bin/bash"}
+        if user["name"] != "root":
+            # Passworded accounts must sudo with their password; key-only
+            # accounts have no password to give, so they get NOPASSWD.
+            entry["sudo"] = (
+                "ALL=(ALL) ALL" if user.get("passwd_hash") else "ALL=(ALL) NOPASSWD:ALL"
+            )
+        if user.get("passwd_hash"):
+            entry["passwd"] = user["passwd_hash"]
+            entry["lock_passwd"] = False
+        if user.get("ssh_keys"):
+            entry["ssh_authorized_keys"] = list(user["ssh_keys"])
+        # Keep the image's default user ("default") alongside the new account;
+        # a bare users: list would otherwise replace it.
+        doc["users"] = ["default", entry]
+        if user.get("passwd_hash"):
+            # CloudBolt itself connects with these credentials over SSH, so
+            # password auth must be accepted by sshd.
+            doc["ssh_pwauth"] = True
+
+    return "#cloud-config\n# CloudBolt NoCloud seed housekeeping.\n" + yaml.safe_dump(
+        doc, default_flow_style=False, sort_keys=False
+    )
 
 
 _USER_DATA_CONTENT_TYPES = (
