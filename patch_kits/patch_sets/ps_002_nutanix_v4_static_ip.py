@@ -45,6 +45,18 @@ manages IPs on that subnet (subnetType OVERLAY, or an ipConfig is present).
   VM_NIC_ADDRESS_POOL_EXHAUSTED) AND written into the seed so cloud-init
   configures the same address inside the guest.
 
+Patch 3 (new): report the ASSIGNED IP back to CloudBolt. Nutanix does not
+repeat a NIC's assigned (networkInfo.ipv4Config) address in
+ipv4Info.learnedIpAddresses — verified on-cluster: a VM running on its
+assigned IP showed an empty learned list until a second, extra address was
+added in-guest, and only that extra address appeared. Upstream's v4 branch of
+_convert_nics reads ONLY the learned list, so on managed subnets the IP
+CloudBolt itself assigned is invisible: wait_for_ip_to_be_set retries until
+timeout and VM sync records a secondary address or none. This patch wraps
+_convert_nics so the assigned address becomes the primary 'ip_address' and
+learned extras are kept in 'additional_ip_addresses'. Trade-off: the IP wait
+now passes at creation time, so it no longer doubles as a guest-boot check.
+
 All Nutanix calls go through CloudBolt's existing PrismRESTClient (plain REST
 via `requests`). The JSON property names and URL paths below were checked
 against Nutanix's published v4.0 API definition (the generated model files of
@@ -929,3 +941,57 @@ def patch_nutanix_v4_static_ip():
             self.handle_acropolis_task_failure(e)
 
     AcropolisTechnologyWrapper.create_v4_vm = create_v4_vm
+
+
+# ---------------------------------------------------------------------------
+# Patch 3: report the assigned (ipv4Config) IP to CloudBolt, not just learned
+# ---------------------------------------------------------------------------
+def patch_nutanix_v4_nic_assigned_ip():
+    """Prefer the NIC's assigned address in converted CloudBolt nic dicts.
+
+    Nutanix only puts addresses it snoops off the wire into
+    ipv4Info.learnedIpAddresses; the assigned address lives solely in
+    ipv4Config. Upstream _convert_nics (v4 branch) reads only the learned
+    list, so without this patch wait_for_ip_to_be_set cannot see the IP that
+    was just assigned and VM sync stores the wrong address (or none).
+    """
+    original = AcropolisTechnologyWrapper._convert_nics
+
+    def _convert_nics(self, nic_dicts):
+        converted = original(self, nic_dicts)
+        if not getattr(self, "is_api_v4", False):
+            return converted
+        # The original appends exactly one converted dict per dict entry of
+        # nic_dicts, in order, so this zip stays aligned.
+        raw_nics = [n for n in nic_dicts if isinstance(n, dict)]
+        for raw, conv in zip(raw_nics, converted):
+            # PC returns both 'networkInfo' and the newer 'nicNetworkInfo'
+            # alias; accept either in case the legacy key ever goes away.
+            net_info = raw.get("networkInfo") or raw.get("nicNetworkInfo") or {}
+            assigned = (
+                (net_info.get("ipv4Config") or {}).get("ipAddress") or {}
+            ).get("value")
+            if not assigned or conv.get("ip_address") == assigned:
+                continue
+            extras = [
+                s.strip()
+                for s in (conv.get("additional_ip_addresses") or "").split(",")
+                if s.strip()
+            ]
+            learned_primary = conv.get("ip_address")
+            if learned_primary and learned_primary not in extras:
+                extras.insert(0, learned_primary)
+            extras = [e for e in extras if e != assigned]
+            conv["ip_address"] = assigned
+            if extras:
+                conv["additional_ip_addresses"] = ", ".join(extras)
+            logger.debug(
+                "Patch 3: using assigned IP %s as primary for NIC %s "
+                "(learned kept as additional: %s)",
+                assigned,
+                conv.get("mac"),
+                extras or None,
+            )
+        return converted
+
+    AcropolisTechnologyWrapper._convert_nics = _convert_nics
