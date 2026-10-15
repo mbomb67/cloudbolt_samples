@@ -1,3 +1,6 @@
+import json
+from urllib.parse import urlencode
+
 from django.db.models import Q
 from infrastructure.models import Server
 from jobs.models import Job
@@ -9,8 +12,15 @@ REFERENCE_FIELDS = {
     "company": ("core_company", "name"),
 }
 
+# The IRE attributes the payload to this data source (sysparm_data_source),
+# which lets the customer's reconciliation rules grant CloudBolt authority
+# over the attributes it owns. Taken from the CMDB field map's discovery_source
+# value; the value must be a discovery_source choice on cmdb_ci.
+# https://www.servicenow.com/docs/r/eJIqiaxRKVcMaR8XQU6_oA/AawFLNaPF5h3FoI97~DLtg
+DATA_SOURCE_KEY = "discovery_source"
 
-def _resolve_reference_fields(service_now_api, cmdb_items):
+
+def _resolve_reference_fields(service_now_api, cmdb_items, job):
     cache = {}
     for item in cmdb_items:
         values = item["values"]
@@ -20,16 +30,54 @@ def _resolve_reference_fields(service_now_api, cmdb_items):
                 continue
             key = (table, raw)
             if key not in cache:
-                url = (
-                    f"{service_now_api.service_now_instance_url}/api/now/table/{table}"
-                    f"?sysparm_query={display_col}={raw}&sysparm_fields=sys_id&sysparm_limit=1"
+                query = urlencode(
+                    {
+                        "sysparm_query": f"{display_col}={raw}",
+                        "sysparm_fields": "sys_id",
+                        "sysparm_limit": 1,
+                    }
                 )
+                url = f"{service_now_api.service_now_instance_url}/api/now/table/{table}?{query}"
                 results = service_now_api._snow_get(url).json().get("result", [])
                 cache[key] = results[0]["sys_id"] if results else None
             if cache[key]:
                 values[field] = cache[key]
             else:
-                values.pop(field)  # no match — drop rather than corrupt the column
+                job.set_progress(f"No {table} record named '{raw}'; leaving {field} unset.")
+                values.pop(field)  # no match: drop rather than corrupt the column
+
+
+def _identify_reconcile(service_now_api, cmdb_items, relations, data_source, job):
+    """
+    POST /api/now/identifyreconcile with the payload attributed to data_source.
+    Returns True when the IRE accepted every item; masked attributes are logged
+    because the IRE reports them as success.
+    """
+    url = f"{service_now_api.service_now_instance_url}/api/now/identifyreconcile"
+    if data_source:
+        url += "?" + urlencode({"sysparm_data_source": data_source})
+    payload = {"items": cmdb_items}
+    if relations:
+        payload["relations"] = relations
+    job.set_progress(f"ServiceNow IRE data source: {data_source or 'instance default'}")
+
+    response = service_now_api._snow_post(url, body=json.dumps(payload))
+    job.set_progress(f"IRE response: {response.text[:2000]}")
+    if response.status_code not in (200, 201):
+        return False
+
+    ok = True
+    for item in response.json().get("result", {}).get("items", []):
+        masked = item.get("maskedAttributes") or []
+        if masked:
+            job.set_progress(
+                f"IRE {item.get('operation')} {item.get('sysId')}: reconciliation rules "
+                f"masked {', '.join(masked)} for source '{data_source or 'instance default'}'."
+            )
+        if item.get("errors"):
+            job.set_progress(f"IRE errors: {item['errors']}")
+            ok = False
+    return ok
 
 
 def create_or_update_servicenow_cmdb_record(server: Server, job: Job, *args, **kwargs):
@@ -70,6 +118,13 @@ def create_or_update_servicenow_cmdb_record(server: Server, job: Job, *args, **k
             }
         )
 
+    if not cmdb_items:
+        job.set_progress(
+            f"No CMDB configuration matches {server.hostname} (environment, OS build, "
+            f"resource technology); nothing sent to ServiceNow."
+        )
+        return "SUCCESS", "", ""
+
     # Get Relations
     cmdb_list_index_map = {}
     cmdb_ids = []
@@ -100,17 +155,21 @@ def create_or_update_servicenow_cmdb_record(server: Server, job: Job, *args, **k
 
     # Get the appropriate wrapper for this technology.
     service_now_api = itsm.get_api_wrapper()
-    
-    _resolve_reference_fields(service_now_api, cmdb_items)
+
+    _resolve_reference_fields(service_now_api, cmdb_items, job)
+
+    # The first rendered discovery_source names the IRE data source for the
+    # whole payload; the key stays in the values as an attribute as well.
+    data_source = next(
+        (item["values"].get(DATA_SOURCE_KEY) for item in cmdb_items if item["values"].get(DATA_SOURCE_KEY)),
+        None,
+    )
 
     # Create or update the CI's (Configuration Item)
-    # job.set_progress(f"ServiceNow IRE payload: items={cmdb_items}, relations={relations}")
-    
-    """
+    job.set_progress(f"ServiceNow IRE payload: items={cmdb_items}, relations={relations}")
+
     try:
-        result = service_now_api.create_or_update_ci_records(
-            cmdb_items, relations=relations
-        )
+        result = _identify_reconcile(service_now_api, cmdb_items, relations, data_source, job)
     except RuntimeError as error:
         return "FAILURE", "", error
 
@@ -121,16 +180,6 @@ def create_or_update_servicenow_cmdb_record(server: Server, job: Job, *args, **k
             )
         )
         return "FAILURE", "", ""
-    """
-    
-    try:
-        response = service_now_api.snow_identify_reconcile_items(
-            cmdb_items, relations=relations
-        )
-        job.set_progress(f"IRE response: {response.text}")
-        result = response.status_code in [200, 201]
-    except RuntimeError as error:
-        return "FAILURE", "", error
 
     job.set_progress(f"Updated ServiceNow CMDB for {server.hostname}")
     return "SUCCESS", "", ""
