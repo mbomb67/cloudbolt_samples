@@ -6,22 +6,47 @@ Drop-in replacement for CloudBolt's out-of-the-box Infoblox IPAM orchestration
 Management > <Infoblox instance> > Orchestration; the edit applies only to that
 instance and is kept across CloudBolt upgrades.
 
-Why: Infoblox stores host record names in lowercase, but the wrapper's
-get_host_by_name() searches with a case-sensitive regex (record:host?name~=).
-With an uppercase hostname (e.g. CBTEST1044) the record is created, but the
-lookup that follows finds nothing, so allocate_ip() returns None, sc_nic_0_ip
-stays empty, and the build goes out with no IP. The same lookup also breaks the
-duplicate check, DHCP setup, and decommission for uppercase names.
+Why: the OOTB module finds host records with the wrapper's get_host_by_name(),
+which runs an unanchored, case-sensitive regex search (record:host?name~=) and
+takes the first result. With an uppercase hostname (e.g. CBTEST1044) the record
+is created, the lookup that follows finds nothing, allocate_ip() returns None,
+sc_nic_0_ip stays empty and the build goes out with no IP. Because the search is
+unanchored, a lowercase name can also match a different, longer one (cbtest104
+matches cbtest1044.example.com), so the wrong IP could be returned, the wrong
+host's record updated for DHCP, or the wrong record deleted.
 
 Changes from the OOTB module:
-  - every name passed to get_host_by_name() (directly or via the wrapper's
-    setup_dhcp_for_host()) is lowercased
-  - allocate_ip() looks the record up by its FQDN instead of the bare
-    hostname, so the unanchored regex can't match a longer name such as
-    cbtest1044 when looking up cbtest104
+  - the FQDN is lowercased before the record is created, so the stored name
+    does not depend on how a given Infoblox grid normalizes case
+  - every lookup goes through _find_host_record(), which only accepts a
+    record whose name matches exactly (case-insensitive)
+  - allocate_ip() fails the build if it can't read back the record it just
+    created, instead of returning no IP
+  - setup_dhcp_for_host() and delete_host() act on the exact record found,
+    by its _ref, rather than on the wrapper's first regex match / "default"
+    DNS view
 """
+import json
 
 from utilities.exceptions import CloudBoltException
+
+
+def _find_host_record(wrapper, name):
+    """
+    Return the host record whose name exactly matches `name`, or None.
+
+    `name` may be an FQDN or a bare hostname; a bare hostname is compared with
+    the first label of each record's name. Comparison is case-insensitive.
+    """
+    name = name.lower()
+    url = "{}record:host?name~={}".format(wrapper.BASE_URL, name)
+    for record in wrapper._run_get_command(url):
+        record_name = record.get("name", "").lower()
+        if "." not in name:
+            record_name = record_name.split(".", 1)[0]
+        if record_name == name:
+            return record
+    return None
 
 
 def is_hostname_valid(infoblox, server, network=None):
@@ -31,7 +56,7 @@ def is_hostname_valid(infoblox, server, network=None):
     Code defined here will be executed at the Pre-Create Resource trigger point.
     """
     wrapper = infoblox.get_api_wrapper()
-    host = wrapper.get_host_by_name(server.hostname.lower())
+    host = _find_host_record(wrapper, server.hostname)
     return host is None
 
 
@@ -42,19 +67,21 @@ def allocate_ip(infoblox, server, network):
 
     Code defined here will be executed at the Pre-Create Resource trigger point.
     """
-    ip = None
     wrapper = infoblox.get_api_wrapper()
-    host_fqdn = "{}.{}".format(server.hostname, network.dns_domain)
+    host_fqdn = "{}.{}".format(server.hostname, network.dns_domain).lower()
     wrapper.add_host_record(
         host_fqdn, "func:nextavailableip:{}".format(network.ipam_network.network_ref)
     )
 
-    host_record = wrapper.get_host_by_name(host_fqdn.lower())
-    if host_record:
-        host_ipv4addrs = host_record["ipv4addrs"]
-        ip = host_ipv4addrs[0]["ipv4addr"]
-
-    return ip
+    host_record = _find_host_record(wrapper, host_fqdn)
+    if not host_record or not host_record.get("ipv4addrs"):
+        raise CloudBoltException(
+            "Created host record '{}' in IPAM '{}' but could not read it back to get "
+            "its IP. The record may need to be removed from Infoblox manually.".format(
+                host_fqdn, infoblox.name
+            )
+        )
+    return host_record["ipv4addrs"][0]["ipv4addr"]
 
 
 def setup_dhcp_for_host(infoblox, hostname, mac_address):
@@ -62,7 +89,14 @@ def setup_dhcp_for_host(infoblox, hostname, mac_address):
     Code defined here will be executed at the Pre-Network Configuration trigger point.
     """
     wrapper = infoblox.get_api_wrapper()
-    wrapper.setup_dhcp_for_host(hostname.lower(), mac_address)
+    host_record = _find_host_record(wrapper, hostname)
+    if not host_record:
+        raise CloudBoltException(
+            "Host '{}' not found in IPAM '{}'".format(hostname, infoblox.name)
+        )
+    url = "{}{}".format(wrapper.BASE_URL, host_record["ipv4addrs"][0]["_ref"])
+    body = {"mac": "{}".format(mac_address), "configure_for_dhcp": True}
+    wrapper._run_put_command(url, json.dumps(body))
 
 
 def restart_dhcp_service(infoblox):
@@ -80,17 +114,12 @@ def delete_host(infoblox, host_fqdn, network=None):
     Code defined here will be executed at the Post-Decomission trigger point.
     """
     wrapper = infoblox.get_api_wrapper()
-    # This will get the host info, including FQDN, given either fully
-    # qualified domain name or just hostname without the domain.
-    info = wrapper.get_host_by_name(host_fqdn.lower())
-    # We're expecting info to contain a dictionary but should confirm.
-    if not isinstance(info, dict):
+    # host_fqdn may be the fully qualified domain name or just the hostname.
+    info = _find_host_record(wrapper, host_fqdn)
+    if not info:
         raise CloudBoltException(
             "Error getting host '{}' from IPAM '{}'".format(host_fqdn, infoblox.name)
         )
-    host_fqdn = info.get("name", None)
-    if not host_fqdn:
-        raise CloudBoltException(
-            "FQDN '{}' not found in IPAM '{}'".format(host_fqdn, infoblox.name)
-        )
-    wrapper.delete_host_record(host_fqdn)
+    # delete_fixed_address() is a plain DELETE by object reference, so it works
+    # for host records too, in whatever DNS view the record lives.
+    wrapper.delete_fixed_address(info["_ref"])
