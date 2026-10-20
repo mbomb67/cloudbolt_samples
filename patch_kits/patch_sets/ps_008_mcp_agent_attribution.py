@@ -369,7 +369,13 @@ def _inherited_for_new_job(job) -> Optional[Attribution]:
     from jobs.threadjob import get_thread_job
 
     source = job.parent_job if getattr(job, "parent_job_id", None) else get_thread_job()
-    return attribution_for_job(source)
+    found = attribution_for_job(source)
+    if found is None:
+        # A top-level job the job engine creates for an agent-initiated order,
+        # e.g. the deploy job an approval-sync recurring job kicks off after an
+        # external (ITSM) approval: the order's own history carries the marker.
+        found = attribution_for_order(job.get_order())
+    return found
 
 
 # --------------------------------------------------------------------------- #
