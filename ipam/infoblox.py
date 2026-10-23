@@ -60,6 +60,14 @@ def is_hostname_valid(infoblox, server, network=None):
     return host is None
 
 
+def get_dns_domain(server, network):
+    dns_domain = server.get_value_for_custom_field("dns_domain") or ""
+    if not dns_domain:
+        # fall back to the value on the network
+        dns_domain = network.dns_domain
+    return dns_domain
+
+
 def allocate_ip(infoblox, server, network):
     """
     Call out to Infoblox to allocate an IP address for a given hostname.
@@ -68,7 +76,8 @@ def allocate_ip(infoblox, server, network):
     Code defined here will be executed at the Pre-Create Resource trigger point.
     """
     wrapper = infoblox.get_api_wrapper()
-    host_fqdn = "{}.{}".format(server.hostname, network.dns_domain).lower()
+    dns_domain = get_dns_domain(server, network)
+    host_fqdn = f"{server.hostname}.{dns_domain}".lower()
     wrapper.add_host_record(
         host_fqdn, "func:nextavailableip:{}".format(network.ipam_network.network_ref)
     )
