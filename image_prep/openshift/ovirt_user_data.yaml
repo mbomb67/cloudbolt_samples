@@ -1,0 +1,33 @@
+#cloud-config
+
+# --- Identity -------------------------------------------------------------
+preserve_hostname: false
+hostname: {{ server.hostname }}
+{% if sc_nic_0.dns_domain %}fqdn: {{ server.hostname }}.{{ sc_nic_0.dns_domain }}{% endif %}
+
+# --- Static addressing ----------------------------------------------------
+write_files:
+  - path: /etc/NetworkManager/system-connections/cb-static.nmconnection
+    permissions: '0600'
+    owner: root:root
+    content: |
+      [connection]
+      id=cb-static
+      type=ethernet
+      autoconnect=true
+      autoconnect-priority=100
+      [ipv4]
+      method=manual
+      address1={{ server.sc_nic_0_ip }}/{{ sc_nic_0.prefix }},{{ sc_nic_0.gateway }}
+      dns={{ sc_nic_0.dns1 }};{{ sc_nic_0.dns2 }};
+      dns-search={{ sc_nic_0.dns_domain }}
+      [ipv6]
+      method=disabled
+
+runcmd:
+  - nmcli connection reload
+  - nmcli connection up cb-static
+  # Local FQDN resolution before DNS registration catches up
+  - |
+    grep -q "{{ server.sc_nic_0_ip }}" /etc/hosts || \
+    echo "{{ server.sc_nic_0_ip }} {% if sc_nic_0.dns_domain %}{{ server.hostname }}.{{ sc_nic_0.dns_domain }} {% endif %}{{ server.hostname }}" >> /etc/hosts
